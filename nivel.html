@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nivel — ContainersPro</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./nivel.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="./index.html" class="nav__logo">
+        <span class="nav__logo-icon">⬡</span>
+        ContainersPro
+      </a>
+      <div class="nav__links">
+        <a href="./index.html#etapas">Etapas</a>
+        <a href="./index.html#niveles">Todos los niveles</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="nivel-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header">
+        <span class="sidebar__title">Niveles</span>
+        <button class="sidebar__toggle" id="sidebar-toggle" aria-label="Cerrar menú">✕</button>
+      </div>
+      <div class="sidebar__list" id="sidebar-list">
+        <!-- populated by JS -->
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="nivel-main" id="nivel-main">
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb" id="breadcrumb">
+        <a href="./index.html">Inicio</a>
+        <span>›</span>
+        <span id="bc-etapa"></span>
+        <span>›</span>
+        <span id="bc-nivel"></span>
+      </div>
+
+      <!-- HEADER -->
+      <header class="nivel-header" id="nivel-header">
+        <div class="nivel-header__meta">
+          <span class="nivel-header__num" id="nivel-num"></span>
+          <span class="nivel-header__etapa" id="nivel-etapa-badge"></span>
+        </div>
+        <h1 class="nivel-header__title" id="nivel-title"></h1>
+        <p class="nivel-header__objetivo" id="nivel-objetivo"></p>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="nivel-content" id="nivel-content">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- NAVEGACIÓN PREV/NEXT -->
+      <nav class="nivel-nav" id="nivel-nav">
+        <button class="nivel-nav__btn nivel-nav__btn--prev" id="btn-prev" disabled>
+          ← Nivel anterior
+        </button>
+        <a href="./index.html#niveles" class="nivel-nav__index">Ver todos</a>
+        <button class="nivel-nav__btn nivel-nav__btn--next" id="btn-next">
+          Siguiente nivel →
+        </button>
+      </nav>
+
+    </main>
+
+  </div>
+
+  <!-- SIDEBAR OPEN BUTTON (mobile) -->
+  <button class="sidebar-open-btn" id="sidebar-open-btn" aria-label="Abrir menú">☰</button>
+
+  <script type="module" src="./nivel.js"></script>
+</body>
+</html>

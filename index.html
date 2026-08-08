@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contenedores y Orquestación Profesional</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <span class="nav__logo">
+        <span class="nav__logo-icon">⬡</span>
+        ContainersPro
+      </span>
+      <div class="nav__links">
+        <a href="#etapas">Etapas</a>
+        <a href="#niveles">Niveles</a>
+        <a href="#proyecto">Proyecto</a>
+        <a href="#herramientas">Herramientas</a>
+        <a href="#ruta">Ruta</a>
+      </div>
+      <button class="btn btn--outline" id="nav-cta">Inscribirme</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__badges">
+      <span class="badge badge--docker">Docker</span>
+      <span class="badge badge--compose">Docker Compose</span>
+      <span class="badge badge--k8s">Kubernetes</span>
+    </div>
+    <h1 class="hero__title">
+      Contenedores y Orquestación
+      <span class="hero__title--accent">Profesional</span>
+    </h1>
+    <p class="hero__sub">De cero hasta despliegues empresariales</p>
+    <div class="hero__stats">
+      <div class="stat">
+        <span class="stat__num" data-target="23">0</span>
+        <span class="stat__label">Niveles</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" data-target="140">0</span>
+        <span class="stat__label">Módulos</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" data-target="450">0</span>
+        <span class="stat__label">Ejemplos</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" data-target="120">0</span>
+        <span class="stat__label">Laboratorios</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" data-target="18">0</span>
+        <span class="stat__label">Proyectos</span>
+      </div>
+    </div>
+    <div class="hero__level">
+      <span class="level-pill level-pill--start">Principiante</span>
+      <span class="level-arrow">→</span>
+      <span class="level-pill level-pill--end">Profesional</span>
+    </div>
+    <div class="hero__actions">
+      <button class="btn btn--primary">Comenzar gratis</button>
+      <button class="btn btn--ghost" id="hero-preview">Ver temario</button>
+    </div>
+    <div class="hero__arch" aria-hidden="true">
+      <div class="arch-diagram">
+        <div class="arch-layer arch-layer--app">Aplicación</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer arch-layer--container">Contenedor</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer arch-layer--runtime">Container Runtime</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer arch-layer--kernel">Kernel Linux</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBJETIVOS -->
+  <section class="objectives" id="objetivos">
+    <div class="container">
+      <h2 class="section-title">Al finalizar vas a poder</h2>
+      <ul class="objectives__grid">
+        <li>Comprender cómo funcionan los contenedores internamente</li>
+        <li>Diferenciar contenedores de máquinas virtuales</li>
+        <li>Construir imágenes profesionales con Dockerfiles optimizados</li>
+        <li>Administrar redes y volúmenes en Docker</li>
+        <li>Orquestar aplicaciones con Docker Compose</li>
+        <li>Comprender la arquitectura completa de Kubernetes</li>
+        <li>Desplegar aplicaciones escalables en producción</li>
+        <li>Diagnosticar problemas de producción con herramientas nativas</li>
+        <li>Prepararte para entornos Cloud y DevOps</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- METODOLOGÍA -->
+  <section class="method">
+    <div class="container">
+      <h2 class="section-title">Metodología</h2>
+      <div class="method__steps">
+        <div class="method__step">
+          <span class="method__num">01</span>
+          <span class="method__label">Problema real</span>
+        </div>
+        <div class="method__connector"></div>
+        <div class="method__step">
+          <span class="method__num">02</span>
+          <span class="method__label">Analogía</span>
+        </div>
+        <div class="method__connector"></div>
+        <div class="method__step">
+          <span class="method__num">03</span>
+          <span class="method__label">¿Qué ocurre internamente?</span>
+        </div>
+        <div class="method__connector"></div>
+        <div class="method__step">
+          <span class="method__num">04</span>
+          <span class="method__label">Comandos</span>
+        </div>
+        <div class="method__connector"></div>
+        <div class="method__step">
+          <span class="method__num">05</span>
+          <span class="method__label">Laboratorio</span>
+        </div>
+        <div class="method__connector"></div>
+        <div class="method__step">
+          <span class="method__num">06</span>
+          <span class="method__label">Proyecto</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ETAPAS -->
+  <section class="etapas" id="etapas">
+    <div class="container">
+      <h2 class="section-title">Tres etapas, una progresión continua</h2>
+      <div class="etapa-tabs">
+        <button class="etapa-tab active" data-etapa="1">
+          <span class="etapa-tab__icon">🐋</span>
+          <span>Etapa I</span>
+          <span class="etapa-tab__name">Fundamentos Docker</span>
+        </button>
+        <button class="etapa-tab" data-etapa="2">
+          <span class="etapa-tab__icon">⚙️</span>
+          <span>Etapa II</span>
+          <span class="etapa-tab__name">Docker Compose</span>
+        </button>
+        <button class="etapa-tab" data-etapa="3">
+          <span class="etapa-tab__icon">☸️</span>
+          <span>Etapa III</span>
+          <span class="etapa-tab__name">Kubernetes</span>
+        </button>
+      </div>
+      <div class="etapa-content active" data-content="1">
+        <p class="etapa-desc">Entendé cómo funcionan los contenedores desde el kernel. Namespaces, cgroups, overlayfs, imágenes, volúmenes y redes. La base que todo profesional DevOps necesita dominar.</p>
+        <div class="etapa-levels">
+          <span class="level-chip">Nivel 0: Introducción</span>
+          <span class="level-chip">Nivel 1: Internals</span>
+          <span class="level-chip">Nivel 2: Arquitectura</span>
+          <span class="level-chip">Nivel 3: Imágenes</span>
+          <span class="level-chip">Nivel 4: Contenedores</span>
+          <span class="level-chip">Nivel 5: Dockerfile</span>
+          <span class="level-chip">Nivel 6: Build Pro</span>
+          <span class="level-chip">Nivel 7: Volúmenes</span>
+          <span class="level-chip">Nivel 8: Redes</span>
+          <span class="level-chip">Nivel 9: Registry</span>
+        </div>
+      </div>
+      <div class="etapa-content" data-content="2">
+        <p class="etapa-desc">Coordiná múltiples contenedores como una sola aplicación. Aprendé a modelar stacks completos en YAML: servicios, redes, volúmenes, secrets y configuraciones.</p>
+        <div class="etapa-levels">
+          <span class="level-chip">Nivel 10: Introducción</span>
+          <span class="level-chip">Nivel 11: docker-compose.yml</span>
+          <span class="level-chip">Nivel 12: Multicontenedor</span>
+          <span class="level-chip">Nivel 13: Networking</span>
+          <span class="level-chip">Nivel 14: Proyecto</span>
+        </div>
+      </div>
+      <div class="etapa-content" data-content="3">
+        <p class="etapa-desc">El salto a orquestación distribuida. Arquitectura completa de K8s, Pods, Deployments, Services, Ingress, PersistentVolumes, autoscaling y rolling updates.</p>
+        <div class="etapa-levels">
+          <span class="level-chip">Nivel 15: Introducción</span>
+          <span class="level-chip">Nivel 16: Arquitectura K8s</span>
+          <span class="level-chip">Nivel 17: Objetos</span>
+          <span class="level-chip">Nivel 18: Networking</span>
+          <span class="level-chip">Nivel 19: Almacenamiento</span>
+          <span class="level-chip">Nivel 20: Configuración</span>
+          <span class="level-chip">Nivel 21: Escalabilidad</span>
+          <span class="level-chip">Nivel 22: Proyecto Final</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NIVELES -->
+  <section class="niveles" id="niveles">
+    <div class="container">
+      <h2 class="section-title">Todos los niveles</h2>
+      <div class="niveles__grid" id="niveles-grid">
+        <!-- generated by main.js -->
+        <!-- Nivel 0 -->
+        <div class="nivel-card" data-nivel="0">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">00</span>
+            <div>
+              <h3 class="nivel-card__title">Introducción</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>¿Qué es Docker y qué problema resuelve?</li>
+              <li>Historia y evolución de los contenedores</li>
+              <li>Docker vs Virtualización vs LXC vs Podman</li>
+              <li>Arquitectura general</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Instalación</div>
+          </div>
+        </div>
+
+        <!-- Nivel 1 -->
+        <div class="nivel-card" data-nivel="1">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">01</span>
+            <div>
+              <h3 class="nivel-card__title">¿Qué ocurre internamente?</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Namespaces: PID, NET, MNT, UTS, IPC, USER</li>
+              <li>cgroups: límites de CPU, memoria y I/O</li>
+              <li>OverlayFS y Union Filesystem</li>
+              <li>Del kernel al contenedor paso a paso</li>
+            </ul>
+            <div class="nivel-card__code">
+              <pre>Aplicación → Librerías → Contenedor
+→ Namespaces → cgroups → Kernel</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nivel 2 -->
+        <div class="nivel-card" data-nivel="2">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">02</span>
+            <div>
+              <h3 class="nivel-card__title">Arquitectura Docker</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Docker CLI → API → Daemon → containerd → runc</li>
+              <li>Docker socket y comunicación IPC</li>
+              <li>OCI: Open Container Initiative</li>
+              <li>Image layers y registry</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 3 -->
+        <div class="nivel-card" data-nivel="3">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">03</span>
+            <div>
+              <h3 class="nivel-card__title">Imágenes</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Layers de solo lectura y container layer</li>
+              <li>Manifest, config y blob</li>
+              <li>Cache de capas y optimización</li>
+              <li>Inspección de imágenes</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 4 -->
+        <div class="nivel-card" data-nivel="4">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">04</span>
+            <div>
+              <h3 class="nivel-card__title">Contenedores</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li><code>docker run</code>, <code>docker ps</code>, <code>docker exec</code></li>
+              <li><code>docker logs</code>, <code>docker stop</code>, <code>docker rm</code></li>
+              <li><code>docker inspect</code> en profundidad</li>
+              <li>Ciclo de vida completo de un contenedor</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Ciclo de vida</div>
+          </div>
+        </div>
+
+        <!-- Nivel 5 -->
+        <div class="nivel-card" data-nivel="5">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">05</span>
+            <div>
+              <h3 class="nivel-card__title">Dockerfile</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>FROM, RUN, COPY, ADD, WORKDIR</li>
+              <li>ENV, ARG, LABEL, EXPOSE</li>
+              <li>CMD vs ENTRYPOINT</li>
+              <li>Buenas prácticas y antipatrones</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Imagen desde cero</div>
+          </div>
+        </div>
+
+        <!-- Nivel 6 -->
+        <div class="nivel-card" data-nivel="6">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">06</span>
+            <div>
+              <h3 class="nivel-card__title">Build Profesional</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Cache de capas: estrategias avanzadas</li>
+              <li>Multi-stage builds: imágenes mínimas</li>
+              <li>Build context y .dockerignore</li>
+              <li>BuildKit: paralelismo y secretos</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Imagen Go de 8 MB</div>
+          </div>
+        </div>
+
+        <!-- Nivel 7 -->
+        <div class="nivel-card" data-nivel="7">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">07</span>
+            <div>
+              <h3 class="nivel-card__title">Volúmenes</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Tipos: named, bind mount, tmpfs</li>
+              <li>Persistencia de datos entre reinicios</li>
+              <li>Backup y restauración de volúmenes</li>
+              <li>Drivers de volumen</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: DB persistente</div>
+          </div>
+        </div>
+
+        <!-- Nivel 8 -->
+        <div class="nivel-card" data-nivel="8">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">08</span>
+            <div>
+              <h3 class="nivel-card__title">Redes Docker</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Bridge, Host, None internamente</li>
+              <li>Overlay para clústeres</li>
+              <li>Macvlan y redes personalizadas</li>
+              <li>DNS interno de Docker</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Red multicontenedor</div>
+          </div>
+        </div>
+
+        <!-- Nivel 9 -->
+        <div class="nivel-card" data-nivel="9">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">09</span>
+            <div>
+              <h3 class="nivel-card__title">Docker Registry</h3>
+              <span class="nivel-card__etapa etapa--docker">Docker</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Docker Hub, GHCR, Harbor</li>
+              <li>Registry privado con autenticación</li>
+              <li>Versionado semántico de imágenes</li>
+              <li>Push / pull en pipelines CI</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 10 -->
+        <div class="nivel-card" data-nivel="10">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">10</span>
+            <div>
+              <h3 class="nivel-card__title">Introducción a Compose</h3>
+              <span class="nivel-card__etapa etapa--compose">Compose</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>¿Por qué existe Docker Compose?</li>
+              <li>Compose v2 vs v1 (legacy)</li>
+              <li>Casos de uso: dev, CI, test, staging</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 11 -->
+        <div class="nivel-card" data-nivel="11">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">11</span>
+            <div>
+              <h3 class="nivel-card__title">docker-compose.yml</h3>
+              <span class="nivel-card__etapa etapa--compose">Compose</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>services, volumes, networks</li>
+              <li>configs y secrets</li>
+              <li>Variables de entorno y .env</li>
+              <li>Override files por ambiente</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 12 -->
+        <div class="nivel-card" data-nivel="12">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">12</span>
+            <div>
+              <h3 class="nivel-card__title">Aplicaciones Multicontenedor</h3>
+              <span class="nivel-card__etapa etapa--compose">Compose</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Stack: Cliente → Nginx → Backend → Redis → PostgreSQL</li>
+              <li>Orden de arranque y depends_on</li>
+              <li>Healthchecks y restart policies</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Stack completo</div>
+          </div>
+        </div>
+
+        <!-- Nivel 13 -->
+        <div class="nivel-card" data-nivel="13">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">13</span>
+            <div>
+              <h3 class="nivel-card__title">Networking Compose</h3>
+              <span class="nivel-card__etapa etapa--compose">Compose</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>DNS interno y service discovery</li>
+              <li>Aliases y redes múltiples</li>
+              <li>Aislamiento entre servicios</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 14 -->
+        <div class="nivel-card" data-nivel="14">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">14</span>
+            <div>
+              <h3 class="nivel-card__title">Proyecto Compose</h3>
+              <span class="nivel-card__etapa etapa--compose">Compose</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Stack completo: Nginx + Flask + PostgreSQL + Redis</li>
+              <li>Configuración por ambientes</li>
+              <li>Volumes persistentes y backups</li>
+            </ul>
+            <div class="nivel-card__lab">🏗️ Proyecto: Full stack local</div>
+          </div>
+        </div>
+
+        <!-- Nivel 15 -->
+        <div class="nivel-card" data-nivel="15">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">15</span>
+            <div>
+              <h3 class="nivel-card__title">Introducción a Kubernetes</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>¿Qué problema resuelve Kubernetes?</li>
+              <li>Historia: Borg → Omega → Kubernetes</li>
+              <li>Docker Swarm vs Kubernetes</li>
+              <li>CNCF y el ecosistema cloud-native</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 16 -->
+        <div class="nivel-card" data-nivel="16">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">16</span>
+            <div>
+              <h3 class="nivel-card__title">Arquitectura Kubernetes</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Control Plane: API Server, Scheduler, Controller Manager, etcd</li>
+              <li>Worker Nodes: Kubelet, kube-proxy, Container Runtime</li>
+              <li>kubectl → API Server → Scheduler → Pods</li>
+            </ul>
+            <div class="nivel-card__code">
+              <pre>kubectl → API Server → etcd
+       ↓
+   Scheduler → Kubelet → Pod</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nivel 17 -->
+        <div class="nivel-card" data-nivel="17">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">17</span>
+            <div>
+              <h3 class="nivel-card__title">Objetos Kubernetes</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Pod, Deployment, ReplicaSet</li>
+              <li>DaemonSet, StatefulSet</li>
+              <li>Job y CronJob</li>
+              <li>Diferencias y cuándo usar cada uno</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Todos los objetos</div>
+          </div>
+        </div>
+
+        <!-- Nivel 18 -->
+        <div class="nivel-card" data-nivel="18">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">18</span>
+            <div>
+              <h3 class="nivel-card__title">Networking Kubernetes</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>Pod networking y CNI plugins</li>
+              <li>ClusterIP, NodePort, LoadBalancer</li>
+              <li>Ingress Controllers</li>
+              <li>NetworkPolicy: segmentación</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Ingress con Nginx</div>
+          </div>
+        </div>
+
+        <!-- Nivel 19 -->
+        <div class="nivel-card" data-nivel="19">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">19</span>
+            <div>
+              <h3 class="nivel-card__title">Almacenamiento K8s</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>PersistentVolume y PersistentVolumeClaim</li>
+              <li>StorageClass y provisioning dinámico</li>
+              <li>CSI: Container Storage Interface</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: DB stateful</div>
+          </div>
+        </div>
+
+        <!-- Nivel 20 -->
+        <div class="nivel-card" data-nivel="20">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">20</span>
+            <div>
+              <h3 class="nivel-card__title">Configuración K8s</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>ConfigMap: configuración no sensible</li>
+              <li>Secret: credenciales y tokens</li>
+              <li>Variables de entorno y volúmenes montados</li>
+              <li>External Secrets Operator (intro)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Nivel 21 -->
+        <div class="nivel-card" data-nivel="21">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">21</span>
+            <div>
+              <h3 class="nivel-card__title">Escalabilidad</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <ul>
+              <li>HPA: Horizontal Pod Autoscaler</li>
+              <li>Rolling Updates sin downtime</li>
+              <li>Rollback con historial</li>
+              <li>Liveness, Readiness y Startup Probes</li>
+            </ul>
+            <div class="nivel-card__lab">🔬 Laboratorio: Zero-downtime deploy</div>
+          </div>
+        </div>
+
+        <!-- Nivel 22 -->
+        <div class="nivel-card nivel-card--final" data-nivel="22">
+          <div class="nivel-card__header">
+            <span class="nivel-card__num">22</span>
+            <div>
+              <h3 class="nivel-card__title">Proyecto Final Empresarial</h3>
+              <span class="nivel-card__etapa etapa--k8s">Kubernetes</span>
+            </div>
+            <span class="nivel-card__toggle">+</span>
+          </div>
+          <div class="nivel-card__body">
+            <p>Plataforma completa con microservicios, bases de datos, autoscaling y despliegue en clúster Kubernetes.</p>
+            <div class="nivel-card__lab">🏆 Proyecto Final Empresarial</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROYECTO FINAL -->
+  <section class="proyecto" id="proyecto">
+    <div class="container">
+      <h2 class="section-title">Proyecto Final Empresarial</h2>
+      <p class="section-sub">Una plataforma completa similar a un entorno real de producción</p>
+      <div class="proyecto__arch">
+        <div class="arch-box arch-box--internet">
+          <span class="arch-box__label">Internet</span>
+        </div>
+        <div class="arch-box arch-box--ingress">
+          <span class="arch-box__icon">↕</span>
+          <span class="arch-box__label">NGINX Ingress</span>
+        </div>
+        <div class="arch-row">
+          <div class="arch-box arch-box--frontend">
+            <span class="arch-box__icon">⬡</span>
+            <span class="arch-box__label">Frontend (React)</span>
+          </div>
+          <div class="arch-box arch-box--gateway">
+            <span class="arch-box__icon">⬡</span>
+            <span class="arch-box__label">API Gateway</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-box arch-box--micro">
+            <span class="arch-box__label">Microservicio A</span>
+          </div>
+          <div class="arch-box arch-box--micro">
+            <span class="arch-box__label">Microservicio B</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-box arch-box--db">
+            <span class="arch-box__icon">🗄</span>
+            <span class="arch-box__label">PostgreSQL</span>
+          </div>
+          <div class="arch-box arch-box--cache">
+            <span class="arch-box__icon">⚡</span>
+            <span class="arch-box__label">Redis</span>
+          </div>
+        </div>
+        <div class="arch-box arch-box--pv">
+          <span class="arch-box__label">Persistent Volume</span>
+        </div>
+      </div>
+      <div class="proyecto__layers">
+        <div class="proyecto__layer">
+          <h4>🐋 Docker</h4>
+          <ul>
+            <li>Dockerfiles optimizados con multi-stage</li>
+            <li>Imágenes versionadas</li>
+            <li>Docker Hub / GHCR</li>
+          </ul>
+        </div>
+        <div class="proyecto__layer">
+          <h4>⚙️ Docker Compose</h4>
+          <ul>
+            <li>Desarrollo local completo</li>
+            <li>Redes y volúmenes</li>
+            <li>Variables por ambiente</li>
+          </ul>
+        </div>
+        <div class="proyecto__layer">
+          <h4>☸️ Kubernetes</h4>
+          <ul>
+            <li>Deployments + Services + Ingress</li>
+            <li>ConfigMaps + Secrets + PVs</li>
+            <li>Autoscaling + Rolling Updates</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERRAMIENTAS -->
+  <section class="herramientas" id="herramientas">
+    <div class="container">
+      <h2 class="section-title">Herramientas del curso</h2>
+      <div class="tools__grid">
+        <div class="tool-group">
+          <h4>Contenedores</h4>
+          <span class="tool-tag">Docker</span>
+          <span class="tool-tag">BuildKit</span>
+          <span class="tool-tag">containerd</span>
+          <span class="tool-tag">runc</span>
+          <span class="tool-tag">Podman</span>
+        </div>
+        <div class="tool-group">
+          <h4>Orquestación local</h4>
+          <span class="tool-tag">Docker Compose</span>
+        </div>
+        <div class="tool-group">
+          <h4>Kubernetes</h4>
+          <span class="tool-tag">Minikube</span>
+          <span class="tool-tag">Kind</span>
+          <span class="tool-tag">kubectl</span>
+          <span class="tool-tag">Helm</span>
+          <span class="tool-tag">Kustomize</span>
+        </div>
+        <div class="tool-group">
+          <h4>Registros</h4>
+          <span class="tool-tag">Docker Hub</span>
+          <span class="tool-tag">GHCR</span>
+          <span class="tool-tag">Harbor</span>
+        </div>
+        <div class="tool-group">
+          <h4>Almacenamiento y redes</h4>
+          <span class="tool-tag">Volumes</span>
+          <span class="tool-tag">Bind Mounts</span>
+          <span class="tool-tag">Ingress</span>
+          <span class="tool-tag">CNI</span>
+          <span class="tool-tag">CSI</span>
+        </div>
+        <div class="tool-group">
+          <h4>Observabilidad</h4>
+          <span class="tool-tag">Docker Logs</span>
+          <span class="tool-tag">kubectl logs</span>
+          <span class="tool-tag">kubectl describe</span>
+          <span class="tool-tag">K8s Dashboard</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RUTA DE APRENDIZAJE -->
+  <section class="ruta" id="ruta">
+    <div class="container">
+      <h2 class="section-title">Ruta de aprendizaje completa</h2>
+      <div class="ruta__path">
+        <div class="ruta__item ruta__item--done">Linux</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item ruta__item--done">Bash Scripting</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item ruta__item--done">Git y GitHub</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item ruta__item--done">Redes para DevOps</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item ruta__item--current">
+          <span class="ruta__item-badge">Estás aquí</span>
+          Contenedores y Orquestación
+        </div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item">Ansible</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item">Terraform</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item">CI/CD</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item">Observabilidad</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item">Cloud (AWS / Azure / GCP)</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item">DevSecOps</div>
+        <div class="ruta__connector"></div>
+        <div class="ruta__item">SRE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-final">
+    <div class="container">
+      <h2>¿Listo para dominar los contenedores?</h2>
+      <p>23 niveles · 140 módulos · 120 laboratorios · 18 proyectos</p>
+      <button class="btn btn--primary btn--lg">Comenzar ahora</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <span class="nav__logo">
+        <span class="nav__logo-icon">⬡</span>
+        ContainersPro
+      </span>
+      <p>Parte de la ruta DevOps profesional</p>
+    </div>
+  </footer>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
