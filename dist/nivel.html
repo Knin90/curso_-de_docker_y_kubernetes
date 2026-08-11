@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nivel — ContainersPro</title>
+
+  <meta name="description" content="Nivel del curso Contenedores y Orquestación Profesional: Docker, Docker Compose y Kubernetes." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="ContainersPro" />
+  <meta property="og:title" content="Nivel — ContainersPro" />
+  <meta property="og:description" content="Nivel del curso Contenedores y Orquestación Profesional: Docker, Docker Compose y Kubernetes." />
+  <meta property="og:image" content="/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_ES" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nivel — ContainersPro" />
+  <meta name="twitter:description" content="Nivel del curso Contenedores y Orquestación Profesional." />
+  <meta name="twitter:image" content="/og.png" />
+
+
+  <!-- Anti-FOUC: aplica el tema guardado antes del primer paint. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('containerspro-theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) { /* almacenamiento no disponible */ }
+    })();
+  </script>
+  <script type="module" crossorigin src="/assets/nivel-CPkRNQVU.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-gsap-CiEuWA-R.js">
+  <link rel="modulepreload" crossorigin href="/assets/style-CJmxLqxE.js">
+  <link rel="stylesheet" crossorigin href="/assets/style-EcHYLMgo.css">
+  <link rel="stylesheet" crossorigin href="/assets/nivel-Cd6nbZMe.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#nivel-main">Saltar al contenido</a>
+
+  <!-- Atmósfera global + partículas ambientales (mismo sistema que el landing,
+       atmosphere.js): parallax de fondo al hacer scroll. -->
+  <div class="atmosphere" aria-hidden="true">
+    <!-- Bandas de lluvia del huracán: la tormenta del landing continúa aquí -->
+    <div class="atmosphere__bands" aria-hidden="true"></div>
+    <!-- Ojo de la tormenta: pared de aurora que orbita el centro y rota con el scroll -->
+    <div class="atmosphere__eye" aria-hidden="true"></div>
+    <!-- Embudo del vórtice: cono que se abre conforme uno desciende hacia el ojo -->
+    <div class="atmosphere__funnel" aria-hidden="true"></div>
+  </div>
+  <!-- Ráfagas de viento: hilos diagonales que soplan sobre todo el contenido -->
+  <div class="storm-streaks" aria-hidden="true"></div>
+  <div class="atmosphere__particles" id="atmosphere-particles" aria-hidden="true"></div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="./index.html" class="nav__logo">
+        <i class="ph ph-hexagon nav__logo-icon" aria-hidden="true"></i>
+        ContainersPro
+      </a>
+      <div class="nav__links">
+        <a href="./index.html#etapas">Etapas</a>
+        <a href="./index.html#niveles">Todos los niveles</a>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar a tema claro" aria-pressed="false">
+        <i class="ph ph-sun theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true"></i>
+        <i class="ph ph-moon theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="nivel-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header">
+        <span class="sidebar__title">Niveles</span>
+        <button class="sidebar__toggle" id="sidebar-toggle" aria-label="Cerrar menú"><i class="ph ph-x" aria-hidden="true"></i></button>
+      </div>
+      <div class="sidebar__list" id="sidebar-list">
+        <!-- populated by JS -->
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="nivel-main" id="nivel-main" data-glows="nivel-content">
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb" id="breadcrumb">
+        <a href="./index.html">Inicio</a>
+        <i class="ph ph-caret-right breadcrumb__sep" aria-hidden="true"></i>
+        <span id="bc-etapa"></span>
+        <i class="ph ph-caret-right breadcrumb__sep" aria-hidden="true"></i>
+        <span id="bc-nivel"></span>
+      </div>
+
+      <!-- HEADER — tarjeta estilo hero-18 -->
+      <header class="nivel-header" id="nivel-header">
+        <div class="nivel-header__bg" aria-hidden="true">
+          <div class="nivel-header__glow nivel-header__glow--a" data-depth="0.9"></div>
+          <div class="nivel-header__glow nivel-header__glow--b" data-depth="1.3"></div>
+        </div>
+        <div class="nivel-header__text">
+          <div class="nivel-badge">
+            <span class="nivel-badge__icon"><i class="ph ph-hexagon" aria-hidden="true"></i></span>
+            <span class="nivel-badge__num" id="nivel-num"></span>
+            <span class="nivel-badge__etapa" id="nivel-etapa-badge"></span>
+            <span class="nivel-badge__orbit" aria-hidden="true"></span>
+          </div>
+          <h1 class="nivel-header__title" id="nivel-title"></h1>
+          <p class="nivel-header__objetivo" id="nivel-objetivo"></p>
+          <div class="nivel-header__meta" id="nivel-meta"></div>
+          <button class="nivel-complete" id="nivel-complete" aria-pressed="false">
+            <i class="ph ph-check-circle" aria-hidden="true"></i>
+            <span class="nivel-complete__label">Marcar como completado</span>
+          </button>
+        </div>
+        <div class="stack3d" id="nivel-stack" aria-hidden="true"></div>
+      </header>
+
+      <!-- CONTENT — escenario de módulos.
+           En modo escenas (initSceneZoom, sin prefers-reduced-motion) el
+           contenedor se vuelve un stage fijo a pantalla completa y cada
+           módulo (nivel-sec) es una escena que hace zoom al pasar al
+           siguiente, estilo ui8.ai/forge. Sin el efecto, renderiza en flujo
+           normal como siempre. -->
+      <div class="nivel-scenes" id="nivel-scenes">
+        <div class="nivel-content" id="nivel-content">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- FEEDBACK DEL NIVEL -->
+      <section class="nivel-feedback" id="nivel-feedback" aria-labelledby="nivel-feedback-title">
+        <div class="nivel-feedback__glow" aria-hidden="true"></div>
+        <div class="nivel-feedback__inner">
+          <div class="nivel-feedback__head">
+            <span class="nivel-feedback__icon"><i class="ph ph-chats-circle" aria-hidden="true"></i></span>
+            <div>
+              <h3 class="nivel-feedback__title" id="nivel-feedback-title">¿Qué te pareció este nivel?</h3>
+              <p class="nivel-feedback__sub">Tu valoración se guarda localmente y aparece en el resumen del curso.</p>
+            </div>
+          </div>
+
+          <div class="nivel-feedback__votes" role="group" aria-label="Valoración del nivel">
+            <button class="nivel-feedback__vote nivel-feedback__vote--up" data-vote="1" aria-pressed="false">
+              <i class="ph ph-thumbs-up" aria-hidden="true"></i>
+              <span>Me gustó</span>
+            </button>
+            <button class="nivel-feedback__vote nivel-feedback__vote--down" data-vote="-1" aria-pressed="false">
+              <i class="ph ph-thumbs-down" aria-hidden="true"></i>
+              <span>A mejorar</span>
+            </button>
+          </div>
+
+          <div class="nivel-feedback__comment">
+            <label class="nivel-feedback__label" for="feedback-comment">
+              Comentario <span class="nivel-feedback__optional">(opcional)</span>
+            </label>
+            <textarea id="feedback-comment" rows="3"
+              placeholder="¿Algo que añadir? Errores, dudas, sugerencias…"></textarea>
+            <button class="nivel-feedback__save" id="feedback-save" type="button">
+              <i class="ph ph-floppy-disk" aria-hidden="true"></i>
+              <span>Guardar comentario</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- NAVEGACIÓN PREV/NEXT -->
+      <nav class="nivel-nav" id="nivel-nav">
+        <button class="nivel-nav__btn nivel-nav__btn--prev" id="btn-prev" disabled>
+          ← Nivel anterior
+        </button>
+        <a href="./index.html#niveles" class="nivel-nav__index">Ver todos</a>
+        <button class="nivel-nav__btn nivel-nav__btn--next" id="btn-next">
+          Siguiente nivel →
+        </button>
+      </nav>
+
+    </main>
+
+  </div>
+
+  <!-- SIDEBAR OPEN BUTTON (mobile) -->
+  <button class="sidebar-open-btn" id="sidebar-open-btn" aria-label="Abrir menú"><i class="ph ph-list" aria-hidden="true"></i></button>
+
+  <!-- HUD del modo escenas: contador de módulos (02 / 08) + título + avance.
+       Se muestra solo durante el escenario de zoom entre módulos. -->
+  <div class="scene-counter" id="scene-counter" aria-hidden="true">
+    <div class="scene-counter__head">
+      <span class="scene-counter__current" id="scene-counter-current">01</span>
+      <span class="scene-counter__slash">/</span>
+      <span class="scene-counter__total" id="scene-counter-total">00</span>
+    </div>
+    <span class="scene-counter__title" id="scene-counter-title"></span>
+    <div class="scene-counter__track"><div class="scene-counter__fill" id="scene-counter-fill"></div></div>
+  </div>
+
+</body>
+</html>

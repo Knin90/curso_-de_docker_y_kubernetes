@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #0a0e1a;
+    color: #e2e8f0;
+    position: relative;
+  }
+  .bg { position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 700px 420px at 16% -12%, rgba(29,99,237,.38), transparent 65%),
+      radial-gradient(ellipse 620px 400px at 98% 112%, rgba(56,189,248,.22), transparent 60%),
+      radial-gradient(ellipse 420px 320px at 82% -6%, rgba(50,108,229,.28), transparent 60%),
+      #0a0e1a;
+  }
+  .grid { position: absolute; inset: 0; opacity: .55;
+    background-image:
+      linear-gradient(rgba(30,45,74,.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,45,74,.55) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .watermark { position: absolute; right: -70px; bottom: -80px; width: 380px; height: 380px; opacity: .1; }
+  .content { position: absolute; inset: 0; padding: 56px 64px 52px; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; gap: 14px; }
+  .logo-icon { width: 42px; height: 42px; filter: drop-shadow(0 0 14px rgba(56,189,248,.35)); }
+  .logo-text { font-size: 23px; font-weight: 800; letter-spacing: .01em; }
+  .logo-text em { font-style: normal; color: #38bdf8; }
+  .spacer { flex: 1; }
+  .badges { display: flex; gap: 10px; }
+  .badge { font-size: 15px; font-weight: 700; padding: 7px 16px; border-radius: 999px; border: 1px solid; }
+  .b-docker  { color: #60a5fa; border-color: rgba(29,99,237,.55);  background: rgba(29,99,237,.18); }
+  .b-compose { color: #fb923c; border-color: rgba(249,115,22,.5); background: rgba(249,115,22,.14); }
+  .b-k8s     { color: #a5b4fc; border-color: rgba(50,108,229,.55); background: rgba(50,108,229,.18); }
+  .title { margin-top: auto; font-size: 62px; line-height: 1.1; font-weight: 800; max-width: 980px; letter-spacing: -.01em; }
+  .title .grad {
+    background: linear-gradient(92deg, #1d63ed, #38bdf8 55%, #4a7ef7);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .sub { margin-top: 18px; font-size: 26px; color: #94a3b8; font-weight: 500; }
+  .bottom { margin-top: 46px; display: flex; align-items: center; gap: 26px; }
+  .rule { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(56,189,248,.4), #1e2d4a 40%, transparent); }
+  .meta { font-size: 17px; color: #64748b; font-weight: 600; letter-spacing: .02em; white-space: nowrap; }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <svg class="watermark" viewBox="0 0 64 64" fill="none">
+    <path d="M32 8 52 20.5v23L32 56 12 43.5v-23Z" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M32 17 44.5 24.2v14.6L32 46 19.5 38.8V24.2Z" fill="#38bdf8"/>
+  </svg>
+  <div class="content">
+    <div class="top">
+      <svg class="logo-icon" viewBox="0 0 64 64">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1d63ed"/>
+            <stop offset=".55" stop-color="#38bdf8"/>
+            <stop offset="1" stop-color="#4a7ef7"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2380f7"/>
+            <stop offset="1" stop-color="#38bdf8"/>
+          </linearGradient>
+        </defs>
+        <rect width="64" height="64" rx="15" fill="#0a0e1a"/>
+        <path d="M32 8 52 20.5v23L32 56 12 43.5v-23Z" fill="none" stroke="url(#g)" stroke-width="4.5" stroke-linejoin="round"/>
+        <path d="M32 17 44.5 24.2v14.6L32 46 19.5 38.8V24.2Z" fill="url(#g2)"/>
+      </svg>
+      <span class="logo-text">Containers<em>Pro</em></span>
+      <div class="spacer"></div>
+      <div class="badges">
+        <span class="badge b-docker">Docker</span>
+        <span class="badge b-compose">Docker Compose</span>
+        <span class="badge b-k8s">Kubernetes</span>
+      </div>
+    </div>
+    <h1 class="title">Contenedores y Orquestación<br/><span class="grad">Profesional</span></h1>
+    <p class="sub">De cero hasta despliegues empresariales</p>
+    <div class="bottom">
+      <div class="rule"></div>
+      <span class="meta">23 niveles · 140 módulos · 120 laboratorios · 18 proyectos</span>
+    </div>
+  </div>
+</body>
+</html>

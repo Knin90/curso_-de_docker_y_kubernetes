@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1600px; height: 640px; overflow: hidden; }
+  body {
+    background: #0a0e1a;
+    position: relative;
+  }
+  .bg { position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 900px 460px at 20% 0%, rgba(29,99,237,.34), transparent 65%),
+      radial-gradient(ellipse 800px 420px at 85% 100%, rgba(56,189,248,.2), transparent 60%),
+      radial-gradient(ellipse 600px 380px at 55% -10%, rgba(50,108,229,.26), transparent 60%),
+      #0a0e1a;
+  }
+  .grid { position: absolute; inset: 0; opacity: .5;
+    background-image:
+      linear-gradient(rgba(30,45,74,.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,45,74,.55) 1px, transparent 1px);
+    background-size: 52px 52px;
+  }
+  .hex-pattern { position: absolute; inset: 0; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 8 52 20.5v23L32 56 12 43.5v-23Z' fill='none' stroke='%2338bdf8' stroke-width='2'/%3E%3C/svg%3E");
+    background-size: 64px 64px;
+  }
+  .containers { position: absolute; left: 0; right: 0; bottom: 0; height: 150px; opacity: .5;
+    display: flex; justify-content: center; gap: 10px; align-items: flex-end;
+  }
+  .crate {
+    width: 110px; height: 52px;
+    border-radius: 6px;
+    border: 1px solid;
+    transform: translateY(26px);
+    box-shadow: 0 18px 40px rgba(0,0,0,.5);
+  }
+  .c1 { background: linear-gradient(160deg, rgba(29,99,237,.35), rgba(29,99,237,.08)); border-color: rgba(29,99,237,.5); }
+  .c2 { background: linear-gradient(160deg, rgba(56,189,248,.3), rgba(56,189,248,.06)); border-color: rgba(56,189,248,.45); }
+  .c3 { background: linear-gradient(160deg, rgba(50,108,229,.32), rgba(50,108,229,.07)); border-color: rgba(50,108,229,.5); }
+  .c4 { background: linear-gradient(160deg, rgba(129,140,248,.3), rgba(129,140,248,.06)); border-color: rgba(129,140,248,.45); }
+  .c5 { background: linear-gradient(160deg, rgba(249,115,22,.26), rgba(249,115,22,.05)); border-color: rgba(249,115,22,.45); }
+  .vignette { position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,14,26,.35), rgba(10,14,26,.05) 40%, rgba(10,14,26,.4));
+  }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <div class="hex-pattern"></div>
+  <div class="containers">
+    <div class="crate c1"></div>
+    <div class="crate c2"></div>
+    <div class="crate c3"></div>
+    <div class="crate c4"></div>
+    <div class="crate c5"></div>
+    <div class="crate c3"></div>
+    <div class="crate c2"></div>
+    <div class="crate c1"></div>
+  </div>
+  <div class="vignette"></div>
+</body>
+</html>
