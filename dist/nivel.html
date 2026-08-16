@@ -39,11 +39,11 @@
       } catch (e) { /* almacenamiento no disponible */ }
     })();
   </script>
-  <script type="module" crossorigin src="/assets/nivel-CPkRNQVU.js"></script>
+  <script type="module" crossorigin src="/assets/nivel-hSYA8mnh.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/vendor-gsap-CiEuWA-R.js">
-  <link rel="modulepreload" crossorigin href="/assets/style-CJmxLqxE.js">
-  <link rel="stylesheet" crossorigin href="/assets/style-EcHYLMgo.css">
-  <link rel="stylesheet" crossorigin href="/assets/nivel-Cd6nbZMe.css">
+  <link rel="modulepreload" crossorigin href="/assets/style-CxvtTwsp.js">
+  <link rel="stylesheet" crossorigin href="/assets/style-BL35bvly.css">
+  <link rel="stylesheet" crossorigin href="/assets/nivel-1w3I_mRZ.css">
 </head>
 <body>
 
@@ -196,15 +196,21 @@
   <!-- SIDEBAR OPEN BUTTON (mobile) -->
   <button class="sidebar-open-btn" id="sidebar-open-btn" aria-label="Abrir menú"><i class="ph ph-list" aria-hidden="true"></i></button>
 
-  <!-- HUD del modo escenas: contador de módulos (02 / 08) + título + avance.
-       Se muestra solo durante el escenario de zoom entre módulos. -->
+  <!-- HUD del modo escenas: contador de módulos (02 / 08) + % de avance,
+       título, secciones leídas y barra de progreso. Se muestra solo durante
+       el escenario de zoom entre módulos. -->
   <div class="scene-counter" id="scene-counter" aria-hidden="true">
     <div class="scene-counter__head">
       <span class="scene-counter__current" id="scene-counter-current">01</span>
       <span class="scene-counter__slash">/</span>
       <span class="scene-counter__total" id="scene-counter-total">00</span>
+      <span class="scene-counter__pct" id="scene-counter-pct">0%</span>
     </div>
     <span class="scene-counter__title" id="scene-counter-title"></span>
+    <div class="scene-counter__read" id="scene-counter-read">
+      <i class="ph ph-check-circle" aria-hidden="true"></i>
+      <span id="scene-counter-read-count">Leído 0/0</span>
+    </div>
     <div class="scene-counter__track"><div class="scene-counter__fill" id="scene-counter-fill"></div></div>
   </div>
 

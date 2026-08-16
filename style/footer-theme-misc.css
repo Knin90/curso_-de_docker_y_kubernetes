@@ -1,0 +1,278 @@
+/* ─── Footer ─── */
+.footer {
+  position: relative;
+  z-index: 2; /* sobre el tornado WebGL de fondo (mismo z 2, DOM posterior) */
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-2); /* fallback */
+  background: color-mix(in srgb, var(--bg-2) 78%, transparent);
+}
+
+/* Línea de luz calma: el borde sereno del ojo de la tormenta cierra la
+   página (la tormenta ya se calmó del todo aquí). */
+.footer::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(72vw, 520px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,.4), transparent);
+  box-shadow: 0 0 26px rgba(34,211,238,.22);
+  pointer-events: none;
+}
+
+.footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 7px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2c4168; }
+
+/* ─── Theme toggle (tema claro/oscuro, ambas páginas) ─── */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.04);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition);
+}
+
+.theme-toggle:hover {
+  border-color: var(--border-2);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.theme-toggle:active { transform: scale(.96); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Los dos iconos comparten celda; el sol se muestra en claro y la luna en
+   oscuro, con una rotación cruzada al cambiar (micro-interacción). */
+.theme-toggle__icon {
+  grid-area: 1 / 1;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.theme-toggle__icon--sun  { opacity: 0; transform: rotate(-90deg) scale(.5); }
+.theme-toggle__icon--moon { opacity: 1; transform: none; }
+
+html[data-theme="light"] .theme-toggle { background: rgba(23,28,44,.04); }
+html[data-theme="light"] .theme-toggle__icon--sun  { opacity: 1; transform: none; }
+html[data-theme="light"] .theme-toggle__icon--moon { opacity: 0; transform: rotate(90deg) scale(.5); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   TEMA CLARO — html[data-theme="light"]
+   El dark luminoso define la identidad; el claro re-mapea los tokens y
+   aclara hero/nav/atmósfera/CTA conservando acentos y forma (hero
+   adaptativo + vórtice con paleta oscura en blending normal).
+   ════════════════════════════════════════════════════════════════════════ */
+html[data-theme="light"] {
+  --bg: #eef3fa;
+  --bg-2: #f8fbff;
+  --bg-3: #e6edf8;
+  --border: #d3dcec;
+  --border-2: #a9b6d1;
+  --text: #171c2c;
+  --text-muted: #5d687f;
+  --text-dim: #3c4659;
+
+  --accent: #0369a1;        /* azul-sky legible sobre fondo claro (AA ≥4.5:1) */
+  --accent-2: #0284c7;
+  --btn-primary: #0e7490;   /* cian CTA: blanco sobre él mantiene AA (≥4.5:1) */
+  --btn-primary-hover: #0d7d9b;
+
+  --bg-2-hover: #ffffff;
+  --bg-3-hover: #f2f5fb;
+  --shadow-card: 0 24px 60px rgba(30, 41, 80, .14), 0 2px 8px rgba(30, 41, 80, .08);
+}
+
+html[data-theme="light"] ::selection {
+  background: rgba(3,105,161,.22);
+  color: #10141f;
+}
+
+/* Nav: superficie clara translúcida */
+html[data-theme="light"] .nav {
+  background: rgba(246,248,253,.85);
+  box-shadow: 0 1px 0 rgba(23,28,44,.04), 0 8px 24px rgba(30, 41, 80, .08);
+}
+
+/* Atmósfera global: tintes cian/índigo suaves en lugar de profundidad */
+html[data-theme="light"] .atmosphere {
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 42%, rgba(56,189,248,.14) 0%, rgba(56,189,248,.06) 45%, rgba(56,189,248,0) 78%),
+    repeating-linear-gradient(45deg, rgba(23,28,44,.02) 0 1px, transparent 1px 7px);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.5) 0%, rgba(0,0,0,.4) 12%, rgba(0,0,0,.22) 55%, rgba(0,0,0,.45) 100%);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.5) 0%, rgba(0,0,0,.4) 12%, rgba(0,0,0,.22) 55%, rgba(0,0,0,.45) 100%);
+}
+
+/* En claro la aurora usa blending normal (screen desaparece sobre blanco) */
+html[data-theme="light"] .atmosphere__eye::before,
+html[data-theme="light"] .atmosphere__eye::after {
+  mix-blend-mode: normal;
+  opacity: calc(.38 * var(--storm, 1) + .06);
+}
+html[data-theme="light"] .atmosphere__eye::before {
+  background:
+    radial-gradient(circle, rgba(14,165,233,.16) 0%, rgba(14,165,233,.05) 40%, transparent 70%),
+    radial-gradient(circle, rgba(56,189,248,.1) 0%, transparent 65%);
+}
+html[data-theme="light"] .atmosphere__eye::after {
+  background:
+    radial-gradient(circle, rgba(99,102,241,.14) 0%, rgba(99,102,241,.05) 42%, transparent 70%),
+    radial-gradient(circle, rgba(14,165,233,.08) 0%, transparent 62%);
+}
+
+/* Ojo de la tormenta en claro: halo suave azulado, sin oscurecer */
+html[data-theme="light"] .atmosphere::after {
+  background:
+    radial-gradient(circle, rgba(14,165,233,.08) 0%, rgba(56,189,248,.03) 42%, transparent 70%),
+    radial-gradient(circle, rgba(238,243,250,.55) 0%, transparent 68%);
+  mix-blend-mode: normal;
+  opacity: calc(.7 * var(--eye-glow, 1));
+}
+
+/* Tormenta en claro: bandas, embudo y ráfagas pasan a azul legible con
+   blending normal (el screen desaparece sobre fondo blanco). */
+html[data-theme="light"] .atmosphere__bands {
+  mix-blend-mode: normal;
+  opacity: calc(var(--storm, 1) * .4);
+  background:
+    repeating-conic-gradient(from 0deg,
+      rgba(3,105,161,0) 0deg 7deg,
+      rgba(3,105,161,.05) 7deg 8.5deg,
+      rgba(3,105,161,0) 8.5deg 20deg,
+      rgba(99,102,241,.035) 20deg 21.5deg,
+      rgba(99,102,241,0) 21.5deg 38deg,
+      rgba(2,132,199,.03) 38deg 39deg,
+      rgba(2,132,199,0) 39deg 55deg);
+}
+
+html[data-theme="light"] .atmosphere__funnel {
+  mix-blend-mode: normal;
+  opacity: calc(var(--storm, 1) * .32);
+  background: linear-gradient(180deg,
+    rgba(3,105,161,0) 0%,
+    rgba(3,105,161,.07) 32%,
+    rgba(2,132,199,.05) 62%,
+    rgba(3,105,161,0) 100%);
+}
+
+html[data-theme="light"] .storm-streaks {
+  opacity: calc(var(--storm, 1) * .3);
+  background-image:
+    repeating-linear-gradient(-58deg,
+      transparent 0px, transparent 34px,
+      rgba(23,28,44,.04) 34px, rgba(23,28,44,.07) 36px,
+      transparent 36px, transparent 70px,
+      rgba(60,70,89,.03) 70px, rgba(60,70,89,.05) 72px,
+      transparent 72px, transparent 118px);
+}
+
+/* Orbes de glow por sección: se atenúan para no manchar el fondo claro */
+html[data-theme="light"] .section-glow i { opacity: calc(var(--o) * 0.32); }
+
+/* Títulos de sección: gradiente oscuro legible sobre claro */
+html[data-theme="light"] .section-title {
+  background: linear-gradient(135deg, #1b2a4a 0%, #0369a1 55%, #0284c7 100%);
+}
+
+/* Eyebrows (chip con órbita): superficie clara y texto oscuro */
+html[data-theme="light"] .section-eyebrow { background: rgba(23,28,44,.04); }
+html[data-theme="light"] .section-eyebrow__text { color: #171c2c; }
+
+/* ─── Hero adaptativo ─── */
+html[data-theme="light"] .hero {
+  /* transparente: el tornado WebGL de fondo se lee a través del hero */
+  background: transparent;
+  color: var(--text);
+}
+
+html[data-theme="light"] .hero__bg {
+  background:
+    radial-gradient(ellipse 72% 42% at 50% 50%, rgba(56,189,248,.16) 0%, rgba(99,102,241,.1) 52%, rgba(56,189,248,0) 100%);
+}
+
+html[data-theme="light"] .hero__glow {
+  mix-blend-mode: normal;
+  background: linear-gradient(180deg, rgba(3,105,161,.16) 0%, rgba(3,105,161,.06) 45%, rgba(3,105,161,0) 90%);
+}
+html[data-theme="light"] .hero__glow--a { opacity: .5; }
+html[data-theme="light"] .hero__glow--b { opacity: .24; }
+html[data-theme="light"] .hero__glow--c { opacity: .3; }
+
+html[data-theme="light"] .hero__lines {
+  background-image: repeating-linear-gradient(45deg, rgba(23,28,44,.045) 0 1px, transparent 1px 7px);
+  -webkit-mask-image: linear-gradient(135deg, rgba(0,0,0,.35) 0%, transparent 60%);
+  mask-image: linear-gradient(135deg, rgba(0,0,0,.35) 0%, transparent 60%);
+}
+
+html[data-theme="light"] .hero__title { color: #171c2c; }
+html[data-theme="light"] .hero__sub { color: #3c4659; opacity: 1; }
+
+html[data-theme="light"] .hero__badge { background: rgba(23,28,44,.04); }
+html[data-theme="light"] .hero__badge-text { color: #171c2c; }
+
+html[data-theme="light"] .hero__btn { color: #171c2c; }
+html[data-theme="light"] .hero__btn--primary { color: #fff; } /* el cian CTA conserva texto blanco */
+html[data-theme="light"] .hero__btn--ghost {
+  background: rgba(23,28,44,.04);
+  border: 1px solid rgba(23,28,44,.14);
+}
+html[data-theme="light"] .hero__btn--ghost:hover {
+  background: rgba(23,28,44,.08);
+  border-color: rgba(23,28,44,.24);
+}
+
+html[data-theme="light"] .hero__ticker-label { color: #3c4659; opacity: .8; }
+html[data-theme="light"] .hero__ticker-inner span { color: #171c2c; opacity: .8; }
+html[data-theme="light"] .hero__ticker-inner .ticker-logo { color: #171c2c; opacity: .85; }
+
+html[data-theme="light"] .hero__shard {
+  background: linear-gradient(135deg, rgba(3,105,161,.22), rgba(23,28,44,.05));
+}
+html[data-theme="light"] .hero__shard--br {
+  background: linear-gradient(135deg, rgba(3,105,161,.18), rgba(23,28,44,.04));
+}
+
+/* Halo de energía del vórtice: en claro pasa a azul oscuro (el #22d3ee
+   base es casi invisible sobre fondo claro). */
+html[data-theme="light"] .vortex-energy-arc {
+  stroke: #0369a1;
+  filter: drop-shadow(0 0 6px rgba(3,105,161,.45));
+}
+html[data-theme="light"] .vortex-energy-track { stroke: rgba(3,105,161,.22); }
+html[data-theme="light"] .vortex-energy-aura {
+  background: radial-gradient(circle, rgba(3,105,161,.35) 0%, rgba(3,105,161,0) 60%);
+}
+
+/* Micro-hovers con superficie blanca: en claro se invierten a oscuro tenue */
+html[data-theme="light"] .nivel-card__header:active { background: rgba(23,28,44,.03); }
+html[data-theme="light"] .tool-tag:hover { background: rgba(23,28,44,.04); }
+
+/* Overlay del CTA final: aclara la imagen de fondo en el tema claro */
+html[data-theme="light"] .cta-final__bg::after {
+  background: linear-gradient(180deg, rgba(238,241,247,.82), rgba(238,241,247,.5) 45%, rgba(238,241,247,.82));
+}

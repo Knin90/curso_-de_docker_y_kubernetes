@@ -20,7 +20,7 @@ function read() {
     if (data?.sections && typeof data.sections === 'object') {
       for (const [k, v] of Object.entries(data.sections)) {
         if (Array.isArray(v)) {
-          sections[k] = v.filter(n => Number.isInteger(n));
+          sections[k] = v.filter((n) => Number.isInteger(n));
         }
       }
     }
@@ -36,9 +36,7 @@ function read() {
       }
     }
     return {
-      completed: Array.isArray(data?.completed)
-        ? data.completed.filter(n => Number.isInteger(n))
-        : [],
+      completed: Array.isArray(data?.completed) ? data.completed.filter((n) => Number.isInteger(n)) : [],
       last: Number.isInteger(data?.last) ? data.last : null,
       sections,
       feedback,
@@ -66,11 +64,12 @@ export function toggleSectionRead(id, index) {
   const data = read();
   const key = String(id);
   const set = new Set(data.sections[key] ?? []);
-  const read = !set.has(index);
-  if (read) set.add(index); else set.delete(index);
+  const readData = !set.has(index);
+  if (readData) set.add(index);
+  else set.delete(index);
   data.sections[key] = [...set].sort((a, b) => a - b);
   write(data);
-  return read;
+  return readData;
 }
 
 /** Número de secciones leídas en el nivel `id`. */
@@ -104,7 +103,9 @@ export function setFeedbackComment(id, comment) {
 /** Conteos globales de feedback para el resumen del landing. */
 export function feedbackStats() {
   const { feedback } = read();
-  let up = 0, down = 0, comments = 0;
+  let up = 0,
+    down = 0,
+    comments = 0;
   for (const f of Object.values(feedback)) {
     if (f.vote === 1) up++;
     else if (f.vote === -1) down++;
@@ -123,7 +124,8 @@ export function toggleCompleted(id) {
   const data = read();
   const set = new Set(data.completed);
   const done = !set.has(id);
-  if (done) set.add(id); else set.delete(id);
+  if (done) set.add(id);
+  else set.delete(id);
   data.completed = [...set].sort((a, b) => a - b);
   write(data);
   return done;

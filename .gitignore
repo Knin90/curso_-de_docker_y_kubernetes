@@ -1,0 +1,10 @@
+# Dependencias
+node_modules/
+
+# Build y artefactos generados
+dist/
+coverage/
+
+# Logs y archivos locales del sistema
+*.log
+.DS_Store

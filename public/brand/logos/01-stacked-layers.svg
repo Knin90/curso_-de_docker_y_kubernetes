@@ -1,0 +1,10 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="currentColor" stroke-linejoin="round">
+    <!-- Bottom layer (base image) -->
+    <path d="M 50 63 L 76 70 L 50 77 L 24 70 Z" stroke-width="2.5" opacity="0.45"/>
+    <!-- Middle layer -->
+    <path d="M 50 45 L 76 52 L 50 59 L 24 52 Z" stroke-width="3"/>
+    <!-- Top layer (solid, active) -->
+    <path d="M 50 27 L 76 34 L 50 41 L 24 34 Z" stroke-width="0" fill="#06b6d4"/>
+  </g>
+</svg>

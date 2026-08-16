@@ -63,7 +63,7 @@
   <nav class="nav">
     <div class="nav__inner">
       <a href="./index.html" class="nav__logo">
-        <i class="ph ph-hexagon nav__logo-icon" aria-hidden="true"></i>
+        <svg class="nav__logo-icon" viewBox="0 0 100 100" aria-hidden="true"><g stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="50" y1="50" x2="50" y2="18"/><line x1="50" y1="50" x2="76" y2="34"/><line x1="50" y1="50" x2="76" y2="66"/><line x1="50" y1="50" x2="50" y2="82" opacity="0.5"/><line x1="50" y1="50" x2="24" y2="66"/><line x1="50" y1="50" x2="24" y2="34" opacity="0.5"/></g><circle cx="50" cy="50" r="10" fill="currentColor"/><g fill="currentColor"><circle cx="50" cy="18" r="4"/><circle cx="76" cy="34" r="4"/><circle cx="76" cy="66" r="4"/><circle cx="50" cy="82" r="3" opacity="0.6"/><circle cx="24" cy="66" r="4"/><circle cx="24" cy="34" r="3" opacity="0.6"/></g></svg>
         ContainersPro
       </a>
       <div class="nav__links">
@@ -193,15 +193,21 @@
   <!-- SIDEBAR OPEN BUTTON (mobile) -->
   <button class="sidebar-open-btn" id="sidebar-open-btn" aria-label="Abrir menú"><i class="ph ph-list" aria-hidden="true"></i></button>
 
-  <!-- HUD del modo escenas: contador de módulos (02 / 08) + título + avance.
-       Se muestra solo durante el escenario de zoom entre módulos. -->
+  <!-- HUD del modo escenas: contador de módulos (02 / 08) + % de avance,
+       título, secciones leídas y barra de progreso. Se muestra solo durante
+       el escenario de zoom entre módulos. -->
   <div class="scene-counter" id="scene-counter" aria-hidden="true">
     <div class="scene-counter__head">
       <span class="scene-counter__current" id="scene-counter-current">01</span>
       <span class="scene-counter__slash">/</span>
       <span class="scene-counter__total" id="scene-counter-total">00</span>
+      <span class="scene-counter__pct" id="scene-counter-pct">0%</span>
     </div>
     <span class="scene-counter__title" id="scene-counter-title"></span>
+    <div class="scene-counter__read" id="scene-counter-read">
+      <i class="ph ph-check-circle" aria-hidden="true"></i>
+      <span id="scene-counter-read-count">Leído 0/0</span>
+    </div>
     <div class="scene-counter__track"><div class="scene-counter__fill" id="scene-counter-fill"></div></div>
   </div>
 

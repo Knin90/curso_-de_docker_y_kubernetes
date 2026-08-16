@@ -1,11 +1,67 @@
 import {
-  WebGLRenderer, ReinhardToneMapping, Scene, PerspectiveCamera, Group,
-  Vector2, Vector3, Matrix4, Color, Texture,
-  NormalBlending, AdditiveBlending,
-  BufferGeometry, BufferAttribute, DynamicDrawUsage,
-  LineBasicMaterial, LineSegments, PlaneGeometry, MeshBasicMaterial,
-  InstancedMesh, InstancedBufferAttribute, Line, SpriteMaterial, Sprite,
+  WebGLRenderer,
+  ReinhardToneMapping,
+  Scene,
+  PerspectiveCamera,
+  Group,
+  Vector2,
+  Vector3,
+  Matrix4,
+  Color,
+  Texture,
+  NormalBlending,
+  AdditiveBlending,
+  BufferGeometry,
+  BufferAttribute,
+  DynamicDrawUsage,
+  LineBasicMaterial,
+  LineSegments,
+  PlaneGeometry,
+  MeshBasicMaterial,
+  InstancedMesh,
+  InstancedBufferAttribute,
+  Line,
+  SpriteMaterial,
+  Sprite,
 } from 'three';
+import {
+  FORM_HEIGHT,
+  BASE_ZOOM,
+  WOBBLE,
+  FADE_ZONE,
+  STRAND_HZ,
+  ENTRANCE,
+  REPEL_MAX_NDC,
+  RIPPLE_RADIUS,
+  RIPPLE_STRENGTH,
+  RIPPLE_SPRING,
+  RIPPLE_DAMPING,
+  SCALE_SPRING,
+  SCALE_DAMPING,
+  SCALE_PEAK,
+  WAVE_SPEED,
+  WAVE_WIDTH,
+  WAVE_DECAY,
+  WAVE_LIFE,
+  WAVE_STRENGTH,
+  MAX_WAVES,
+  RUN_LOW,
+  RUN_HIGH,
+  RUN_FADE,
+  HIT_RADIUS,
+  HIT_BOOST,
+  HIT_BOOST_TIME,
+  HIT_FLASH,
+  HIT_FADE,
+  HIT_POP,
+  HIT_RESPAWN,
+  mergeProps,
+  buildConfig,
+  fovForZoom,
+} from './vortex/config.js';
+import { TAU, clamp, ramp, STRAND_SEGMENTS, makeShape } from './vortex/shape.js';
+import { initScrollReaction } from './vortex/scroll-reaction.js';
+import { buildHalo } from './vortex/halo.js';
 
 /**
  * Vortex — component WebGL reutilizable: el tornado de partículas del diseño
@@ -28,273 +84,31 @@ import {
  *   v.dispose();
  *
  * Comportamiento del motor:
- *   - Strands espirales sobre un hiperboloide pellizcado; dots que las
- *     recorren y parpadean; cometas que las recorren — un impacto apaga la
- *     dot y lanza una onda por su alrededor.
- *   - Reacción al scroll (si scrollReaction): la energía del gesto (velocidad
- *     × presencia del contenedor) acelera el giro, enciende las partículas,
- *     acelera los cometas y acerca la cámara; el scroll rápido dispara golpes
- *     (pulse). Los cometas invierten su recorrido al invertir el gesto.
+ *   - Strands espirales sobre un hiperboloide pellizcado (./vortex/shape.js);
+ *     dots que las recorren y parpadean; cometas que las recorren — un
+ *     impacto apaga la dot y lanza una onda por su alrededor.
+ *   - Reacción al scroll (./vortex/scroll-reaction.js): la energía del gesto
+ *     acelera el giro, enciende las partículas, acelera los cometas y acerca
+ *     la cámara; el scroll rápido dispara golpes (pulse). Los cometas
+ *     invierten su recorrido al invertir el gesto.
  *   - Cada golpe emite `vortex:pulse` en window (detail.strength) — la
  *     atmósfera de la página lo escucha para destellar los orbes al unísono.
  *   - Respeta `prefers-reduced-motion` (render estático, sin scroll ni halo).
+ *
+ * NOTA de mantenimiento: `createVortexEngine`, más abajo, queda deliberadamente
+ * como un solo módulo pese a superar las ~400 líneas de referencia del resto
+ * del proyecto. Es un motor de partículas afinado a mano con muchísimo estado
+ * mutable compartido por closure (posiciones de strands, dots, cometas, ondas)
+ * entre `build()`, el loop `step()` y los helpers de colisión/ripple. Partirlo
+ * en módulos exige convertir todo ese estado en un objeto explícito pasado
+ * entre funciones puras — un cambio real de forma, no solo de ubicación, y
+ * sin poder verificar visualmente el resultado en este entorno (no hay canvas
+ * WebGL renderizable aquí). El riesgo de introducir una regresión sutil en la
+ * pieza visual más vistosa del sitio supera el beneficio de la métrica de
+ * líneas. Lo que sí se extrajo sin riesgo — puro/sin estado compartido — vive
+ * en ./vortex/config.js, ./vortex/shape.js, ./vortex/scroll-reaction.js y
+ * ./vortex/halo.js.
  */
-
-/* ============================================================ config (hero-18) */
-
-const PX_PER_WORLD = 60;
-const CURVE_SAMPLES = 1024;
-const STRAND_SEGMENTS = 400;
-const WOBBLE = 0.008;
-const FADE_ZONE = 0.15;
-const FORM_HEIGHT = 10;
-const BASE_ZOOM = 67;
-
-const LINE_GLOW_MAX = 1;
-const DOT_GLOW_MAX = 4.2;
-const COMET_SPEED_MAX = 0.15;
-const COMET_GLOW_MAX = 1;
-const DOT_SIZE_SCALE = 1000;
-
-const RIPPLE_RADIUS = 2;
-const RIPPLE_STRENGTH = 0.5;
-const RIPPLE_SPRING = 50;
-const RIPPLE_DAMPING = 9;
-const SCALE_SPRING = 65;
-const SCALE_DAMPING = 11;
-const SCALE_PEAK = 1.8;
-
-const WAVE_SPEED = 5;
-const WAVE_WIDTH = 1.2;
-const WAVE_DECAY = 0.8;
-const WAVE_LIFE = 2.5;
-const WAVE_STRENGTH = 0.04;
-const MAX_WAVES = 16;
-
-const RUN_LOW = 0.03;
-const RUN_HIGH = 0.95;
-const RUN_FADE = 0.1;
-
-const HIT_RADIUS = 0.8;
-const HIT_BOOST = 1.6;
-const HIT_BOOST_TIME = 0.4;
-const HIT_FLASH = 6;
-const HIT_FADE = 0.6;
-const HIT_POP = 1.3;
-const HIT_RESPAWN = 8;
-
-const STRAND_HZ = 1 / 30;
-
-const ENTRANCE = { strandStart: 0, strandEnd: 2, dotStart: 1.2, dotEnd: 3, cometStart: 3, cometEnd: 5 };
-
-const REPEL_MAX_NDC = 0.45;
-
-/* ============================================================ props */
-
-/** Valores por defecto: la configuración del hero-18 de Originkit. */
-const DEFAULT_PROPS = {
-  topRadius: 380,
-  waistRadius: 53,
-  waistPosition: 50,
-  bottomRadius: 1150,
-  twist: 3,
-  zoom: 75,
-  speed: 10,
-  direction: 'right', // 'right' | 'left'
-  lineOptions: { count: 240, color: '#22d3ee', glow: 5 },
-  dots: true,
-  dotOptions: { count: 5000, size: 20, color: '#ffffff', glow: 0.8, flicker: 10 },
-  comets: true,
-  cometOptions: { count: 10, speed: 6, color: '#F9731A', glow: 6, tail: 19, delay: 8, collide: 6 },
-  repel: false,
-  repelOptions: { radius: 60, strength: 10 },
-  halo: true,           // anillo de energía sobre el contenedor (vortex-energy)
-  scrollReaction: true, // energía/momentum por scroll + golpes de partículas
-  pulseEvent: true,     // emite `vortex:pulse` en window en cada golpe
-  // Blend de render: 'additive' para fondos oscuros (el tornado suma luz) y
-  // 'normal' para el tema claro, donde las partículas se dibujan opacas con
-  // colores más oscuros (paleta por tema desde hero-vortex.js).
-  blend: 'additive',
-};
-
-/* Merge profundo de props parciales sobre la base (los sub-objetos de opciones
-   se combinan campo a campo, no se reemplazan enteros). */
-function mergeProps(input = {}, base = DEFAULT_PROPS) {
-  const result = { ...base, ...input };
-  for (const key of ['lineOptions', 'dotOptions', 'cometOptions', 'repelOptions']) {
-    result[key] = { ...base[key], ...(input[key] || {}) };
-  }
-  return result;
-}
-
-/* Props públicas → config interna del motor. */
-function buildConfig(props, reduced) {
-  const line = props.lineOptions;
-  const dot = props.dotOptions;
-  const comet = props.cometOptions;
-  const shove = props.repelOptions;
-  return {
-    floorRadius: props.bottomRadius / PX_PER_WORLD,
-    waistRadius: props.waistRadius / PX_PER_WORLD,
-    crownRadius: props.topRadius / PX_PER_WORLD,
-    waistAt: 1 - props.waistPosition / 100,
-    twist: props.twist,
-    zoom: props.zoom,
-    flowDir: props.direction === 'left' ? -1 : 1,
-    flowSpeed: (props.speed / 100) * (props.direction === 'left' ? -1 : 1),
-    lineCount: line.count,
-    lineColor: line.color,
-    lineGlow: (line.glow / 10) * LINE_GLOW_MAX,
-    showDots: props.dots,
-    dotCount: dot.count,
-    dotSize: dot.size / DOT_SIZE_SCALE,
-    dotColor: dot.color,
-    dotGlow: (dot.glow / 10) * DOT_GLOW_MAX,
-    dotFlicker: dot.flicker / 10,
-    showComets: props.comets,
-    cometCount: comet.count,
-    cometSpeed: (comet.speed / 10) * COMET_SPEED_MAX,
-    cometColor: comet.color,
-    cometGlow: (comet.glow / 10) * COMET_GLOW_MAX,
-    cometTail: comet.tail,
-    cometDelay: comet.delay,
-    collideForce: comet.collide / 10,
-    hoverRepel: props.repel,
-    repelRadius: shove.radius,
-    repelStrength: shove.strength,
-    pulseEvent: props.pulseEvent !== false,
-    blend: props.blend === 'normal' ? 'normal' : 'additive',
-    running: !reduced,
-  };
-}
-
-/* ============================================================ maths */
-
-const TAU = Math.PI * 2;
-const clamp = (x, a, b) => Math.min(Math.max(x, a), b);
-
-function ramp(now, from, to) {
-  if (now <= from) return 0;
-  if (now >= to) return 1;
-  const t = (now - from) / (to - from);
-  return 1 - (1 - t) * (1 - t) * (1 - t);
-}
-
-/** Monotone cubic interpolation (Fritsch–Carlson) — keeps the waist pinch from overshooting. */
-function monotone(points) {
-  const n = points.length;
-  const slope = [];
-  for (let i = 0; i < n - 1; i++) {
-    slope[i] = (points[i + 1][1] - points[i][1]) / (points[i + 1][0] - points[i][0]);
-  }
-  const m = [slope[0]];
-  for (let i = 1; i < n - 1; i++) {
-    m[i] = slope[i - 1] * slope[i] <= 0 ? 0 : (slope[i - 1] + slope[i]) / 2;
-  }
-  m[n - 1] = slope[n - 2];
-  for (let i = 0; i < n - 1; i++) {
-    if (Math.abs(slope[i]) < 1e-12) {
-      m[i] = m[i + 1] = 0;
-      continue;
-    }
-    const a = m[i] / slope[i];
-    const b = m[i + 1] / slope[i];
-    const s = a * a + b * b;
-    if (s > 9) {
-      const k = 3 / Math.sqrt(s);
-      m[i] = k * a * slope[i];
-      m[i + 1] = k * b * slope[i];
-    }
-  }
-  return (x) => {
-    if (x <= points[0][0]) return points[0][1];
-    if (x >= points[n - 1][0]) return points[n - 1][1];
-    let i = 0;
-    while (i < n - 2 && points[i + 1][0] < x) i++;
-    const h = points[i + 1][0] - points[i][0];
-    const t = (x - points[i][0]) / h;
-    const t2 = t * t;
-    const t3 = t2 * t;
-    return (
-      (2 * t3 - 3 * t2 + 1) * points[i][1] +
-      (t3 - 2 * t2 + t) * h * m[i] +
-      (-2 * t3 + 3 * t2) * points[i + 1][1] +
-      (t3 - t2) * h * m[i + 1]
-    );
-  };
-}
-
-function bake(fn) {
-  const table = new Float32Array(CURVE_SAMPLES);
-  for (let i = 0; i < CURVE_SAMPLES; i++) table[i] = fn(i / (CURVE_SAMPLES - 1));
-  return table;
-}
-
-function sample(table, t) {
-  if (t <= 0) return table[0];
-  const last = table.length - 1;
-  if (t >= 1) return table[last];
-  const x = t * last;
-  const i = x | 0;
-  return table[i] + (table[i + 1] - table[i]) * (x - i);
-}
-
-/* ============================================================ shape */
-
-function makeShape(cfg) {
-  const w = clamp(cfg.waistAt, 0.08, 0.92);
-  const floor = cfg.floorRadius;
-  const crown = cfg.crownRadius;
-  const turn = cfg.twist * TAU;
-
-  const radius = bake(
-    monotone([
-      [0, floor],
-      [0.24 * w, floor * 0.667],
-      [0.5 * w, floor * 0.3],
-      [0.76 * w, floor * 0.08],
-      [w, cfg.waistRadius],
-      [w + 0.3 * (1 - w), crown * 0.2],
-      [w + 0.6 * (1 - w), crown * 0.44],
-      [1, crown],
-    ])
-  );
-  const height = bake(
-    monotone([
-      [0, 0],
-      [0.1, 0.2],
-      [0.2, 0.8],
-      [0.35, 2],
-      [0.5, FORM_HEIGHT * 0.38],
-      [0.75, FORM_HEIGHT * 0.7],
-      [1, FORM_HEIGHT],
-    ])
-  );
-  const angle = bake(
-    monotone([
-      [0, 0],
-      [0.15, 0.15 * turn],
-      [0.25, 0.25 * turn],
-      [0.45, 0.55 * turn],
-      [0.6, 0.7 * turn],
-      [0.8, 0.88 * turn],
-      [1, turn],
-    ])
-  );
-
-  return {
-    writePoint(out, at, s, lane, flow, wobble, phase, time) {
-      const r = sample(radius, s);
-      const y = sample(height, s);
-      const a = sample(angle, s) + lane + flow;
-      const rr = r + Math.sin(s * 25 + phase + time * 0.3) * wobble * r;
-      out[at] = Math.cos(a) * rr;
-      out[at + 1] = y;
-      out[at + 2] = Math.sin(a) * rr;
-    },
-    lane: (i, total) => (i / total) * TAU,
-  };
-}
 
 /* ============================================================ engine */
 
@@ -340,7 +154,7 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
                     uniform float uRadius;
                     uniform float uStrength;
                     void main() {
-                    `
+                    `,
         )
         .replace(
           '#include <fog_vertex>',
@@ -357,7 +171,7 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
                             gl_Position.xy = ndc * gl_Position.w;
                         }
                     }
-                    `
+                    `,
         );
     };
     return material;
@@ -399,7 +213,15 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
   const dummyPos = new Vector3();
   const dummyScale = new Vector3();
   const tint = { strand: new Color(), dot: new Color(), comet: new Color() };
-  let lastColors = { line: '', dot: '', comet: '' };
+  // Piso de color hacia el que funden los hilos/puntos tenues (v bajo, ver
+  // drawStrand y el loop de dots): con blend aditivo (tema oscuro) el piso
+  // es negro, así v→0 no suma luz y el hilo se vuelve invisible sobre el
+  // fondo oscuro (comportamiento original, sin cambios). Con blend normal
+  // (tema claro) pintar hacia negro a opacidad fija dejaba una "mancha"
+  // oscura visible sobre el fondo claro real — el piso pasa a ser ese fondo
+  // claro (--bg del tema claro) para que v→0 funda hacia él y desaparezca.
+  const base = { strand: new Color(), dot: new Color() };
+  const lastColors = { line: '', dot: '', comet: '', blend: '' };
 
   function syncColors(c) {
     if (c.lineColor !== lastColors.line) {
@@ -416,6 +238,12 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
       for (const comet of cometList) {
         comet.head.material.color.setRGB(tint.comet.r * 1.2, tint.comet.g * 1.2, tint.comet.b * 1.2);
       }
+    }
+    if (c.blend !== lastColors.blend) {
+      lastColors.blend = c.blend;
+      const floor = c.blend === 'normal' ? 0xeef3fa : 0x000000;
+      base.strand.setHex(floor);
+      base.dot.setHex(floor);
     }
   }
 
@@ -467,8 +295,8 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
           opacity: 0.5,
           blending: BLEND,
           depthWrite: false,
-        })
-      )
+        }),
+      ),
     );
     const strandLines = new LineSegments(strandGeo, strandMat);
     strandLines.frustumCulled = false;
@@ -526,8 +354,8 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
             opacity: 0.9,
             blending: BLEND,
             depthWrite: false,
-          })
-        )
+          }),
+        ),
       );
       dotMesh = new InstancedMesh(dotGeo, dotMat, dotCount);
       dotMesh.instanceMatrix.setUsage(DynamicDrawUsage);
@@ -549,7 +377,7 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
         [0.3, 'rgba(255,120,255,0.4)'],
         [0.7, 'rgba(200,50,200,0.08)'],
         [1, 'rgba(0,0,0,0)'],
-      ])
+      ]),
     );
     const cometTotal = c.showComets ? Math.max(0, Math.round(c.cometCount)) : 0;
     const tailLen = Math.max(2, Math.round(c.cometTail));
@@ -568,8 +396,8 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
             opacity: 0.9,
             blending: BLEND,
             depthWrite: false,
-          })
-        )
+          }),
+        ),
       );
       const line = new Line(geo, lineMat);
       line.frustumCulled = false;
@@ -582,7 +410,7 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
           blending: BLEND,
           depthWrite: false,
           color: new Color(tint.comet.r * 1.2, tint.comet.g * 1.2, tint.comet.b * 1.2),
-        })
+        }),
       );
       const head = new Sprite(headMat);
       head.scale.set(0.35, 0.35, 1);
@@ -646,7 +474,7 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
     if (!rect.width || !rect.height) return;
     repelUniforms.uMouse.value.set(
       ((e.clientX - rect.left) / rect.width) * 2 - 1,
-      -(((e.clientY - rect.top) / rect.height) * 2 - 1)
+      -(((e.clientY - rect.top) / rect.height) * 2 - 1),
     );
     repelTarget = c.hoverRepel && c.running ? clamp(c.repelStrength / 100, 0, 1) * REPEL_MAX_NDC : 0;
   };
@@ -811,9 +639,12 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
         tip *= tip;
       }
       const v = edge * lift * tip * alpha;
-      cols[at] = tint.strand.r * v;
-      cols[at + 1] = tint.strand.g * v;
-      cols[at + 2] = tint.strand.b * v;
+      // lerp(piso, tint, v): con piso negro (aditivo) esto es idéntico a
+      // tint*v de siempre; con piso claro (normal) funde hacia el fondo
+      // real en vez de hacia negro. Ver comentario de `base` más arriba.
+      cols[at] = base.strand.r + (tint.strand.r - base.strand.r) * v;
+      cols[at + 1] = base.strand.g + (tint.strand.g - base.strand.g) * v;
+      cols[at + 2] = base.strand.b + (tint.strand.b - base.strand.b) * v;
     }
 
     let w = strand.offset;
@@ -890,8 +721,7 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
     }
 
     const spin = flow * comet.pulse;
-    const ends =
-      clamp((comet.s - RUN_LOW) / RUN_FADE, 0, 1) * clamp((RUN_HIGH - comet.s) / RUN_FADE, 0, 1);
+    const ends = clamp((comet.s - RUN_LOW) / RUN_FADE, 0, 1) * clamp((RUN_HIGH - comet.s) / RUN_FADE, 0, 1);
 
     for (let i = 0; i < tailLen; i++) {
       const s = clamp(comet.s - i * 0.005 * cometDir, 0.005, 0.995);
@@ -1031,7 +861,7 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
         dummyPos.set(
           dotHome[at] + dotShift[at],
           dotHome[at + 1] + dotShift[at + 1],
-          dotHome[at + 2] + dotShift[at + 2]
+          dotHome[at + 2] + dotShift[at + 2],
         );
         dummyScale.set(scale, scale, scale);
         dummy.compose(dummyPos, camera.quaternion, dummyScale);
@@ -1042,10 +872,11 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
           c.dotFlicker +
           c.dotFlicker * (0.08 + 0.92 * Math.max(0, Math.sin(t * dot.flickerRate + dot.pulse)) ** 2.5);
         const swollen = dotScale[i] > 1.02 ? 1 + (dotScale[i] - 1) * 0.5 : 1;
-        const v = dot.bright * beat * c.dotGlow * swollen * fadeDot * (1 + dotFlash[i]) * alive * (1 + e * 0.5);
-        dotColors[at] = tint.dot.r * v;
-        dotColors[at + 1] = tint.dot.g * v;
-        dotColors[at + 2] = tint.dot.b * v;
+        const v =
+          dot.bright * beat * c.dotGlow * swollen * fadeDot * (1 + dotFlash[i]) * alive * (1 + e * 0.5);
+        dotColors[at] = base.dot.r + (tint.dot.r - base.dot.r) * v;
+        dotColors[at + 1] = base.dot.g + (tint.dot.g - base.dot.g) * v;
+        dotColors[at + 2] = base.dot.b + (tint.dot.b - base.dot.b) * v;
       }
       dotMesh.instanceMatrix.needsUpdate = true;
       if (dotMesh.instanceColor) dotMesh.instanceColor.needsUpdate = true;
@@ -1108,99 +939,6 @@ function createVortexEngine(canvas, container, cfg, scroll = {}, onFrame) {
       renderer.forceContextLoss?.();
     },
   };
-}
-
-function fovForZoom(zoom) {
-  return clamp(2 * BASE_ZOOM - zoom, 1, 175);
-}
-
-/* ============================================================ scroll reaction */
-
-/** Energía (0..1) y momentum (-1..1) del gesto, escritos en `scroll` desde un
-    listener con rAF; el motor los decae cada frame. Con scroll rápido dispara
-    `api.pulse()` (throttled): el golpe de partículas + el pulso global. */
-function initScrollReaction(container, scroll, api) {
-  let rafScroll = 0;
-  let lastY = window.scrollY;
-  let lastT = performance.now();
-  let smoothV = 0;
-  let lastPulseAt = 0;
-
-  const computeScroll = () => {
-    rafScroll = 0;
-    const now = performance.now();
-    const dt = Math.max((now - lastT) / 1000, 1e-3);
-    const v = (window.scrollY - lastY) / dt; // velocidad CON signo
-    lastY = window.scrollY;
-    lastT = now;
-    smoothV += (v - smoothV) * Math.min(1, dt * 5);
-
-    // Presencia del contenedor: fuera de la vista, no reacciona.
-    const rect = container.getBoundingClientRect();
-    const vh = window.innerHeight || 1;
-    const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
-    const presence = clamp(visible / Math.max(rect.height, 1), 0, 1);
-
-    scroll.energy = clamp(Math.abs(smoothV) / 1500, 0, 1) * presence;
-    // momentum: magnitud + dirección del gesto (signo).
-    scroll.momentum = clamp(smoothV / 1500, -1, 1) * presence;
-
-    // Scroll rápido → golpe de partículas + pulso global de los orbes (con
-    // throttle). Sin gate de presencia: el pulso es un efecto de página
-    // entera (atmosphere.js destella todas las secciones), no solo del hero,
-    // y un gate de presencia lo mataría justo al salir el vórtice de vista.
-    if (Math.abs(smoothV) > 1600 && now - lastPulseAt > 420) {
-      lastPulseAt = now;
-      api.pulse();
-    }
-  };
-
-  const onScroll = () => {
-    if (!rafScroll) rafScroll = requestAnimationFrame(computeScroll);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  return {
-    dispose() {
-      window.removeEventListener('scroll', onScroll);
-      if (rafScroll) cancelAnimationFrame(rafScroll);
-    },
-  };
-}
-
-/* ============================================================ halo */
-
-/** Anillo de energía sobre el contenedor: se llena y enciende con la energía
-    del scroll. Se ancla al padre del contenedor (el vórtice suele vivir en un
-    wrap desbordado; en el hero el padre coincide con el viewport). */
-function buildHalo(container) {
-  const host = container.parentElement || container;
-  const el = document.createElement('div');
-  el.className = 'vortex-energy';
-  el.setAttribute('aria-hidden', 'true');
-  el.innerHTML =
-    '<span class="vortex-energy-aura"></span>' +
-    '<svg class="vortex-energy-ring" viewBox="0 0 120 120">' +
-    '<circle class="vortex-energy-track" cx="60" cy="60" r="52"/>' +
-    '<circle class="vortex-energy-arc" cx="60" cy="60" r="52"/>' +
-    '</svg>';
-  host.appendChild(el);
-
-  const arc = el.querySelector('.vortex-energy-arc');
-  const aura = el.querySelector('.vortex-energy-aura');
-  const ARC_LEN = 2 * Math.PI * 52; // longitud del arco (r=52 en el viewBox)
-
-  // Actualización por frame: el arco se llena con la energía (0..1), el halo
-  // y su aura se encienden, y el golpe (flash) añade un destello extra.
-  const sync = ({ energy, flash }) => {
-    const e = Math.min(Math.max(energy, 0), 1);
-    arc.style.strokeDashoffset = (ARC_LEN * (1 - e)).toFixed(2);
-    el.style.opacity = Math.min(0.14 + e * 0.72 + flash * 0.5, 1).toFixed(3);
-    aura.style.opacity = Math.min(0.1 + e * 0.8 + flash * 0.9, 1).toFixed(3);
-    el.style.transform = `scale(${(1 + e * 0.05 + flash * 0.07).toFixed(3)})`;
-  };
-
-  return { el, sync };
 }
 
 /* ============================================================ component */

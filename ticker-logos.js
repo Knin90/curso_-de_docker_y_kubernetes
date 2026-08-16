@@ -59,7 +59,7 @@ export const TOOL_ICON_MAP = {
 
 /** Extrae el <path> del SVG original y lo envuelve en un <svg> limpio. */
 export function svgMarkup(raw) {
-  const m = raw.match(/<path[^>]*d="([^\"]+)\"/);
+  const m = raw.match(/<path[^>]*d="([^"]+)"/);
   const d = m ? m[1] : '';
   return `<svg class="brand-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`;
 }
@@ -75,7 +75,8 @@ export function brandMarkup(key) {
 export function initTickerLogos() {
   const track = document.querySelector('.hero__ticker-inner');
   if (!track) return;
-  const item = (logo) => `<span>${MARKUP[logo.icon].replace('brand-logo', 'ticker-logo')}${logo.label}</span>`;
+  const item = (logo) =>
+    `<span>${MARKUP[logo.icon].replace('brand-logo', 'ticker-logo')}${logo.label}</span>`;
   // Contenido duplicado para el marquee infinito (translateX(-50%))
   track.innerHTML = [...LOGOS, ...LOGOS].map(item).join('');
 }

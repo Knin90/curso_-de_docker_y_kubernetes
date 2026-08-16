@@ -1,0 +1,175 @@
+/* ─── Stack 3D (CSS) — modelo del nivel ─── */
+.stack3d {
+  --c1: #1e9ef7;
+  --c2: #38bdf8;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 720px;
+}
+
+.stack3d--docker  { --c1: #1e9ef7; --c2: #38bdf8; }
+.stack3d--compose { --c1: #f97316; --c2: #fdba74; }
+.stack3d--k8s     { --c1: #4a7cf7; --c2: #8aa2ff; }
+
+.stack3d__float {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: stack-float 5.5s ease-in-out infinite;
+}
+
+.stack3d__stack {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: stack-spin 40s linear infinite;
+}
+
+/* Anillos de partículas orbitando la torre (movimiento clúster) */
+.stack3d__orbit {
+  position: absolute;
+  inset: -6px;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.stack3d__orbit--a { animation: orbit-spin-a 11s linear infinite; }
+.stack3d__orbit--b { animation: orbit-spin-b 17s linear infinite; }
+
+.stack3d__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--i) * 120deg)) translateX(84px);
+}
+
+.stack3d__dot--a {
+  background: var(--c2);
+  box-shadow: 0 0 12px var(--c2);
+}
+
+.stack3d__dot--b {
+  background: #e2e8f0;
+  box-shadow: 0 0 10px rgba(226, 232, 240, 0.8);
+}
+
+@keyframes orbit-spin-a {
+  from { transform: rotateX(70deg) rotateZ(0deg); }
+  to   { transform: rotateX(70deg) rotateZ(360deg); }
+}
+
+@keyframes orbit-spin-b {
+  from { transform: rotateX(66deg) rotateZ(30deg); }
+  to   { transform: rotateX(66deg) rotateZ(390deg); }
+}
+
+.stack3d__unit {
+  position: relative;
+  width: 96px;
+  height: 44px;
+  transform-style: preserve-3d;
+}
+
+.stack3d__unit + .stack3d__unit {
+  margin-top: -42px;
+}
+
+.stack3d__unit:nth-child(2) { transform: rotateY(9deg); }
+.stack3d__unit:nth-child(3) { transform: rotateY(-7deg) translateX(2px); }
+
+.stack3d__face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 96px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--c1) 45%, transparent);
+  background: color-mix(in srgb, var(--c1) 14%, #0b0f1a);
+}
+
+.stack3d__face--front { transform: translateZ(22px); }
+.stack3d__face--back  { transform: rotateY(180deg) translateZ(22px); }
+
+.stack3d__face--right,
+.stack3d__face--left {
+  width: 44px;
+  height: 44px;
+  left: 50%;
+  margin-left: -22px;
+}
+.stack3d__face--right {
+  background: color-mix(in srgb, var(--c1) 10%, #0b0f1a);
+  transform: rotateY(90deg) translateZ(48px);
+}
+.stack3d__face--left {
+  background: color-mix(in srgb, var(--c1) 7%, #0b0f1a);
+  transform: rotateY(-90deg) translateZ(48px);
+}
+
+.stack3d__face--top,
+.stack3d__face--bottom {
+  top: 50%;
+  margin-top: -22px;
+}
+.stack3d__face--top {
+  background: color-mix(in srgb, var(--c2) 30%, #0b0f1a);
+  transform: rotateX(90deg) translateZ(22px);
+}
+.stack3d__face--bottom {
+  background: color-mix(in srgb, var(--c1) 6%, #0b0f1a);
+  transform: rotateX(-90deg) translateZ(22px);
+}
+
+@keyframes stack-spin {
+  from { transform: rotateX(-16deg) rotateY(0deg); }
+  to   { transform: rotateX(-16deg) rotateY(360deg); }
+}
+
+@keyframes stack-float {
+  0%, 100% { transform: translateY(-4px); }
+  50%      { transform: translateY(6px); }
+}
+
+.stack3d:empty { display: none; }
+
+@media (max-width: 767px) {
+  .nivel-header {
+    flex-direction: column;
+    gap: 20px;
+    padding: 28px 24px 24px;
+    border-radius: 16px;
+  }
+  .stack3d {
+    margin: 0 auto;
+  }
+}
+
+@media (hover: none) {
+  /* En pantallas táctiles no hay hover: los botones de copiar de los
+     pasos del lab siempre visibles para que sean alcanzables. */
+  .lab-step__cmd-copy { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack3d__stack { animation: none; transform: rotateX(-16deg) rotateY(24deg); }
+  .stack3d__float { animation: none; }
+  .stack3d__orbit, .stack3d__dot { animation: none; }
+  .nivel-badge__orbit::before,
+  .nivel-badge__orbit::after { animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  .sidebar { position: sticky; top: 60px; }
+}
+
+
+/* El MODO ESCENAS (escenas full-screen, HUD .scene-counter, inmersivo) vive
+   ahora en style.css: es compartido entre nivel.html y el landing (index.html). */

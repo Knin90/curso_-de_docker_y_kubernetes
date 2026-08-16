@@ -1,0 +1,127 @@
+/* ─── Buttons ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+}.btn--primary { background: var(--btn-primary); color: #fff; box-shadow: 0 0 22px rgba(34,211,238,.18); }
+.btn--primary:hover { background: var(--btn-primary-hover); transform: translateY(-1px); box-shadow: 0 0 30px rgba(34,211,238,.3); }
+
+.btn--outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border-2);
+}
+.btn--outline:hover { border-color: var(--accent); background: rgba(34,211,238,.06); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.btn--ghost:hover { color: var(--text); border-color: var(--border-2); }
+
+.btn--lg { padding: 14px 32px; font-size: 1rem; }
+
+/* ─── Nav ─── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(14,15,21,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.03), 0 8px 24px rgba(2, 8, 24, .35);
+}
+
+.nav__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.nav__logo-icon { color: var(--accent); width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+}
+
+.nav__links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  position: relative;
+  transition: color var(--transition);
+}
+.nav__links a:hover { color: var(--text); }
+
+/* Indicador de sección activa: subrayado cian que se enciende al hacer
+   scroll (initNavHighlight). En hover se prende igual, como preview. */
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(34, 211, 238, .45);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+.nav__links a:hover::after,
+.nav__links a.active::after { transform: scaleX(1); }
+.nav__links a.active { color: var(--text); }
+
+/* Nav a ancho intermedio: entre 641 y ~820px el logo + 5 enlaces + toggle +
+   CTA desbordan la barra de 60px. Se compacta el ritmo y, bajo 700px, se
+   ocultan los enlaces (el hero ofrece la navegación y el CTA principal). */
+@media (max-width: 880px) {
+  .nav__inner { gap: 16px; }
+  .nav__links { gap: 14px; }
+}
+
+@media (max-width: 760px) {
+  .nav__links a { font-size: 0.8rem; }
+  .nav__links { gap: 10px; }
+  .btn--outline { padding: 8px 14px; font-size: 0.8rem; }
+}
+
+@media (max-width: 700px) {
+  .nav__links { display: none; }
+  .method__figure { margin-bottom: 32px; }
+  .proyecto__banner { margin-bottom: 24px; }
+}
+

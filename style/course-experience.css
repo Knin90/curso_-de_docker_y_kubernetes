@@ -1,0 +1,399 @@
+/* ─── Course Experience: carousel horizontal cinematográfico de niveles ───
+   Ver main/course-experience/. Capas: fondo (crossfade + parallax) →
+   overlay de contraste → decorativo abstracto → header → 3 cards
+   (prev/activa/next) → panel de info (título/métricas/progreso) →
+   flechas → paginación. Solo transform/opacity/filter se animan.
+
+   Ahora vive en la mitad derecha del hero (.niveles, ver
+   niveles-progress.css) en vez de a pantalla completa: `container-type:
+   inline-size` lo convierte en contenedor de tamaño para que sus
+   descendientes usen `cqi` (en vez de `vw`) y escalen contra el ancho de
+   ESTA columna, no contra el viewport completo. En el fallback mobile de
+   una sola columna, la columna ocupa el viewport igual que antes, así que
+   el mismo cqi sigue dando resultados equivalentes a los vw originales. ─── */
+.course-exp {
+  position: relative;
+  min-height: 480px;
+  height: 100%;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  /* sin fondo propio: se ve el tornado animado de #hero-vortex-wrap detrás */
+  background: transparent;
+}
+
+/* Capa decorativa de glows/forma propia del carousel: apagada a pedido del
+   usuario, solo debe verse la tormenta animada de fondo detrás de las cards. */
+.course-exp__bg {
+  display: none;
+}
+
+.course-exp__bg-layer {
+  position: absolute;
+  inset: 0;
+  --course-a: var(--docker-blue);
+  --course-b: var(--accent);
+}
+
+.course-exp__bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+}
+
+.course-exp__bg-glow--1 {
+  width: 46cqi;
+  height: 46cqi;
+  left: -8%;
+  top: -6%;
+  background: radial-gradient(circle, var(--course-a), transparent 68%);
+}
+
+.course-exp__bg-glow--2 {
+  width: 38cqi;
+  height: 38cqi;
+  right: -6%;
+  bottom: -8%;
+  background: radial-gradient(circle, var(--course-b), transparent 68%);
+  opacity: 0.28;
+}
+
+.course-exp__bg-shape {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--course-a);
+  opacity: 0.14;
+}
+
+.course-exp__bg-shape svg { width: min(52cqi, 620px); height: min(52cqi, 620px); }
+
+/* Apagado junto con .course-exp__bg: sin overlay opaco, el tornado se ve
+   detrás de las cards en vez del degradé de var(--bg). */
+.course-exp__overlay {
+  display: none;
+}
+
+.course-exp__decor {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.course-exp__header {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px clamp(20px, 4cqi, 48px) 0;
+}
+
+.course-exp__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.course-exp__brand .ph { color: var(--accent); }
+
+.course-exp__menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border-2);
+  background: rgba(255,255,255,.03);
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.course-exp__menu-btn:hover { color: var(--text); border-color: var(--accent); }
+.course-exp__menu-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.course-exp__menu-btn[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); }
+
+.course-exp__stage {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 20px clamp(16px, 6cqi, 90px);
+}
+
+.course-exp__cards {
+  position: relative;
+  width: 100%;
+  height: clamp(260px, 42vh, 460px);
+}
+
+.course-exp-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(200px, 26cqi, 340px);
+  height: 100%;
+  padding: 22px 22px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-2);
+  background: linear-gradient(180deg, rgba(255,255,255,.04), transparent 55%), var(--bg-2);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.course-exp-card[aria-current="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(34,211,238,.35), var(--shadow-card);
+}
+
+.course-exp-card__glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(34,211,238,.12), transparent 60%);
+  pointer-events: none;
+}
+
+.course-exp-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.course-exp-card__num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.course-exp-card__etapa {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border-2);
+}
+
+.course-exp-card__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.course-exp-card__check {
+  margin-top: auto;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: rgba(255,255,255,.03);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.course-exp-card__check:hover { color: var(--accent); border-color: var(--accent); }
+.course-exp-card__check:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.course-exp-card__check.done {
+  color: #05060a;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.course-exp__arrow {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: rgba(10,13,21,.55);
+  color: var(--text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition);
+}
+
+.course-exp__arrow:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.06); }
+.course-exp__arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.course-exp__info {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 4px clamp(20px, 4cqi, 48px) 6px;
+}
+
+.course-exp__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3cqi, 2.2rem);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 14px;
+}
+
+.course-exp__metrics {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 4cqi, 40px);
+  margin-bottom: 14px;
+}
+
+.course-exp-metric {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.course-exp-metric .ph { color: var(--accent); font-size: 1rem; line-height: 1; }
+
+.course-exp-metric__num {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.course-exp-metric__label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-muted);
+}
+
+.course-exp__progress { margin-bottom: 4px; }
+
+.course-exp-progress__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border-2);
+  background: rgba(255,255,255,.03);
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.course-exp-progress__btn:hover { border-color: var(--accent); color: var(--text); }
+.course-exp-progress__btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.course-exp-progress__btn.done {
+  color: #05060a;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.course-exp__pagination {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 clamp(20px, 4cqi, 48px) 22px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.course-exp-pag__current { color: var(--accent); font-variant-numeric: tabular-nums; }
+.course-exp-pag__total { font-variant-numeric: tabular-nums; }
+
+.course-exp-pag__track {
+  width: min(220px, 34cqi);
+  height: 4px;
+  border-radius: 99px;
+  background: var(--bg-3);
+  overflow: hidden;
+}
+
+.course-exp-pag__fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), #0ea5e9);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* Panel "todos los niveles": grilla completa reutilizando .nivel-card */
+.course-exp__menu {
+  border-top: 1px solid var(--border);
+  padding: 28px 0 8px;
+  background: var(--bg-2);
+}
+
+@media (max-width: 900px) {
+  .course-exp-card { width: clamp(180px, 58cqi, 300px); }
+  .course-exp__arrow { width: 42px; height: 42px; min-width: 42px; font-size: 1rem; }
+}
+
+@media (max-width: 640px) {
+  .course-exp__header { padding-top: 16px; }
+  .course-exp__menu-btn span { display: none; }
+  .course-exp__stage { padding-inline: 8px; }
+  .course-exp-card { width: min(78cqi, 320px); padding: 18px 18px 16px; }
+  .course-exp__metrics { gap: 14px; }
+  .course-exp-metric__label { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-exp__bg, .course-exp__decor { transform: none !important; }
+}
+
+html[data-theme="light"] .course-exp__overlay {
+  background:
+    radial-gradient(120% 90% at 50% 8%, transparent 30%, var(--bg) 92%),
+    linear-gradient(180deg, rgba(238,243,250,.4) 0%, transparent 22%, transparent 74%, rgba(238,243,250,.6) 100%);
+}
+
+html[data-theme="light"] .course-exp__arrow { background: rgba(255,255,255,.7); }

@@ -1,0 +1,288 @@
+/* ─── Content Sections ─── */
+.section-block {
+  margin-bottom: 48px;
+}
+
+/* Ritmo entre módulos: en flujo normal (sin el modo escenas, que aislaba
+   cada módulo en su propia pantalla) cada .nivel-scene envuelve un módulo
+   completo (un section-block/callout/lab-block). El margen interno de esos
+   bloques (48px) ya separa contenido del mismo tipo; este padding extra en
+   el wrapper de módulo es deliberadamente mayor (48+24=72px totales) para
+   que el salto a un tema nuevo se lea distinto de la separación dentro de
+   un mismo bloque (20px cabecera↔cuerpo, 8-12px entre ítems). Padding y no
+   margin: evita que colapse con el margin-bottom del hijo y se pierda el
+   refuerzo. */
+.nivel-scene:not(:last-child) {
+  padding-bottom: 24px;
+}
+
+.section-block__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.section-block__index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1px solid rgba(34,211,238,.25);
+  background: rgba(34,211,238,.05);
+  border-radius: 8px;
+  padding: 3px 9px;
+  letter-spacing: .06em;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.section-block__title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+.section-block__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+.section-block__icon {
+  font-size: 1.05rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+/* Problem/Analogy blocks — callouts con cabecera */
+.block--problem,
+.block--analogy {
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 48px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.block--problem::before,
+.block--analogy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 90% at 90% 0%, rgba(var(--glow), .14) 0%, transparent 70%);
+}
+
+.block--problem {
+  --glow: 239,68,68;
+  background: linear-gradient(180deg, rgba(239,68,68,.05), rgba(239,68,68,.015));
+  border: 1px solid rgba(239,68,68,.16);
+}
+
+.block--analogy {
+  --glow: 34,211,238;
+  background: linear-gradient(180deg, rgba(34,211,238,.04), rgba(34,211,238,.012));
+  border: 1px solid rgba(34,211,238,.13);
+}
+
+.callout__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.callout__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.block--problem .callout__icon {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow: 0 6px 18px rgba(239,68,68,.3);
+}
+
+.block--analogy .callout__icon {
+  background: linear-gradient(135deg, #2dd4bf, #0e7490);
+  box-shadow: 0 6px 18px rgba(45,212,191,.22);
+}
+
+.callout__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.01em;
+}
+
+.callout__tag {
+  margin-left: auto;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.callout__body { margin-top: 4px; }
+
+/* Prose */
+.block-prose {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+
+.block-prose p { margin-bottom: 12px; }
+.block-prose p:last-child { margin-bottom: 0; }
+
+/* Items list — tarjetas con check */
+.items-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.items-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255,255,255,.015), transparent 60%), rgba(255,255,255,.008);
+  transition: border-color var(--transition), transform var(--transition), background var(--transition);
+}
+
+.items-list__item:hover {
+  border-color: var(--border-2);
+  background: rgba(255,255,255,.02);
+  /* `translate` (propiedad individual) no choca con el transform
+     inline que deja GSAP tras el stagger de entrada. */
+  translate: 3px 0;
+}
+
+.items-list__mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(34,211,238,.1);
+  color: var(--accent);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  margin-top: 3px;
+  line-height: 1;
+}
+
+.items-list__mark .ph { font-size: 0.8rem; }
+
+.items-list__text {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.75;
+  min-width: 0;
+}
+
+/* Inline code */
+.items-list__text code, .block-prose code, .body-text code {
+  background: rgba(34,211,238,.08);
+  color: var(--accent);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+/* Bold in markdown-style */
+.items-list__text strong, .block-prose strong, .body-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Comparison table */
+.comparison-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.015), transparent 40%), var(--bg-2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+.comparison-table-scroll { overflow-x: auto; }
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 520px;
+}
+
+.comparison-table th {
+  background: var(--bg-3);
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.comparison-table th:first-child { color: var(--text); }
+.comparison-table th:nth-child(2) { color: var(--compose-orange); }
+.comparison-table th:nth-child(3) { color: var(--accent); }
+
+.comparison-table td {
+  padding: 10px 16px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.comparison-table tr:last-child td { border-bottom: none; }
+.comparison-table tbody tr { transition: background var(--transition); }
+.comparison-table tbody tr:hover { background: rgba(34,211,238,.025); }
+.comparison-table td:first-child { color: var(--text); font-weight: 500; }
+
+/* History list — timeline */
+.history-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 2px solid var(--border);
+  margin-left: 8px;
+  padding-left: 0;
+}
+
+.history-list li {
+  padding: 12px 0 12px 24px;
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  position: relative;
+  line-height: 1.6;
+}

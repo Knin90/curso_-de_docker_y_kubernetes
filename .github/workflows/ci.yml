@@ -1,0 +1,77 @@
+# ─── CI — verificación en cada push y PR ───
+# Corre los cuatro checks de calidad del proyecto contra el código fuente:
+#   1. lint          → ESLint (0 errores requerido)
+#   2. format:check  → Prettier (todo el JS formateado)
+#   3. test          → Vitest con cobertura (umbrales en vitest.config.js)
+#   4. build         → Vite build (multi-página landing + nivel)
+#
+# La versión de pnpm viene de packageManager (package.json); Node se fija
+# en 22 (LTS, dentro del rango engines.node del proyecto).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Cancela runs anteriores del mismo ref si llega uno nuevo (push rápido).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: lint · format · test · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          # Toma la versión exacta de packageManager (package.json).
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Test (con cobertura)
+        run: pnpm test
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Build
+        run: pnpm build
+
+      # dist/ está commiteado en el repo: el build debe regenerar exactamente
+      # lo mismo que está versionado. Si hay diferencias, el developer no
+      # commiteó el build actualizado — el check falla para forzarlo.
+      - name: Check dist/ está sincronizado con el código fuente
+        run: git diff --exit-code -- dist/

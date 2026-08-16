@@ -1,0 +1,248 @@
+
+.toc-item__icon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  transition: color var(--transition);
+}
+
+.toc-item__icon .ph { line-height: 1; }
+
+.toc-item.active .toc-item__icon { color: var(--accent); }
+
+.toc-item.done .toc-item__icon { opacity: .55; }
+
+.toc-item__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+
+.toc-item.done .toc-item__title {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(34,211,238,.35);
+  text-decoration-thickness: 1px;
+}
+
+/* Mini barra de progreso del nivel dentro del TOC */
+.sidebar__toc-progress {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 10px 2px 2px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar__toc-progress-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.sidebar__toc-progress-count {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar__toc-progress-track {
+  grid-column: 1 / -1;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.sidebar__toc-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), #0ea5e9);
+  box-shadow: 0 0 8px rgba(34,211,238,.4);
+  transition: width 500ms var(--ease-out);
+}
+
+/* Anclas de sección: el contenido debe quedar bajo la nav fija */
+.nivel-sec {
+  scroll-margin-top: 84px;
+}
+
+/* Progreso del curso en la cabecera del sidebar */
+.sidebar__progress {
+  margin: 0 16px 8px;
+  padding: 14px 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(34,211,238,.06), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.02), transparent 60%), var(--bg-3);
+}
+
+.sidebar__progress-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sidebar__progress-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.sidebar__progress-count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar__progress-track {
+  height: 4px;
+  border-radius: 99px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.sidebar__progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), #0ea5e9);
+  box-shadow: 0 0 12px rgba(34,211,238,.5);
+  transition: width 600ms var(--ease-out);
+}
+
+.sidebar__group-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  padding: 16px 20px 6px;
+  opacity: 0.6;
+}
+
+.sidebar__group-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+.sidebar__group-dot--docker  { background: var(--docker-blue);  color: var(--docker-blue); }
+.sidebar__group-dot--compose { background: var(--compose-orange); color: var(--compose-orange); }
+.sidebar__group-dot--k8s     { background: var(--k8s-blue);     color: var(--k8s-blue); }
+
+.sidebar__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition), transform var(--transition);
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+
+.sidebar__item:hover {
+  color: var(--text-dim);
+  background: rgba(255,255,255,.03);
+  transform: translateX(3px);
+}
+
+.sidebar__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.sidebar__item.active {
+  color: var(--text);
+  background: linear-gradient(90deg, rgba(34,211,238,.09), rgba(34,211,238,.02));
+  border-left-color: var(--accent);
+}
+
+.sidebar__item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(34,211,238,.7);
+}
+
+.sidebar__item-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--border-2);
+  min-width: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar__item.active .sidebar__item-num { color: var(--accent); }
+
+.sidebar__item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Nivel completado: check cian reemplaza al indicador */
+.sidebar__item-check {
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: rgba(34,211,238,.12);
+  border: 1px solid rgba(34,211,238,.3);
+  color: var(--accent);
+  font-size: 0.68rem;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.sidebar__item-check .ph { line-height: 1; }
+
+.sidebar__item.done .sidebar__item-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.sidebar__item.done .sidebar__item-name {
+  color: var(--text-dim);
+}
+
+.sidebar__item.done .sidebar__item-num {
+  color: rgba(34,211,238,.6);
+}
+

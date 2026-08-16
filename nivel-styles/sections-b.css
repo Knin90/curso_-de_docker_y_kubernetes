@@ -1,0 +1,361 @@
+
+.history-list li::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg-2);
+  border: 2px solid var(--border-2);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.history-list li:hover::before {
+  border-color: var(--accent);
+  background: rgba(34,211,238,.15);
+  box-shadow: 0 0 10px rgba(34,211,238,.45);
+}
+
+.history-list li strong {
+  color: var(--accent);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: .02em;
+}
+
+/* Diagram block — ventana de terminal */
+.diagram-block {
+  background: #0a0d16;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(4,16,44,.35), inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+.diagram-block__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid var(--border);
+}
+
+.diagram-block__label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+/* Diagram figure — SVG hand-authored, reemplaza el <pre> de ASCII-art.
+   La ventana de terminal (.diagram-block) es siempre oscura, en ambos
+   temas — igual que .code-block — así que el color base y el acento acá
+   son fijos (no var(--text)/var(--accent), que se invierten en tema claro
+   y quedarían ilegibles sobre este fondo). El tono base replica el que
+   tenía el <pre> (#9aa8c0); el acento replica el --accent del tema oscuro
+   (#22d3ee), que mantiene contraste no-textual (~3.3:1) contra el fondo
+   en ambos temas — se usa solo en trazos/rellenos del elemento central,
+   nunca en texto. */
+.diagram-figure {
+  margin: 0;
+  padding: 22px 26px;
+  color: #9aa8c0;
+  --diagram-accent: #22d3ee;
+}
+
+.diagram-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  font-family: var(--font-mono);
+}
+
+/* Un <text> sin fill="currentColor" propio cae al default del user-agent
+   (negro), invisible sobre el fondo oscuro fijo de .diagram-block en
+   cualquier tema. Se acota a `text` — no a todo el <svg> — porque una
+   regla de stylesheet le gana en prioridad a un atributo de presentación
+   como fill="none" en los rects de contorno, y pisarlos los rellenaría. */
+.diagram-figure svg text {
+  font-family: var(--font-mono);
+  fill: currentColor;
+}
+
+.diagram-figure svg .dg-accent {
+  color: var(--diagram-accent);
+}
+
+.diagram-figure figcaption {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.diagram-block pre {
+  padding: 22px 26px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: #9aa8c0;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Code block — ventana de terminal */
+.code-block {
+  background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%), #0a0d16;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(4,16,44,.35), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.code-block__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid var(--border);
+}
+
+.win-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.win-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.win-dots i:nth-child(1) { background: #ff5f57; }
+.win-dots i:nth-child(2) { background: #febc2e; }
+.win-dots i:nth-child(3) { background: #28c840; }
+
+.code-block__lang {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  flex: 1;
+}
+
+.code-block__copy {
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: border-color var(--transition), color var(--transition), transform var(--transition);
+}
+
+.code-block__copy:hover { border-color: var(--border-2); color: var(--text); }
+.code-block__copy:active { transform: scale(0.96); }
+.code-block__copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.code-block__copy.copied { border-color: rgba(45,212,191,.4); color: #2dd4bf; }
+
+.code-block pre {
+  padding: 20px 24px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #aeb9cc;
+  /* Líneas largas bajan de renglón en vez de cortarse — con scroll vertical
+     nada más nunca se veía el final de una línea larga sin además scrollear
+     horizontal (gesto que casi nadie prueba, se sentía como "contenido
+     incompleto"). */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Syntax highlight (subido de luminancia para legibilidad sobre #0a0d16) */
+.token-keyword { color: #7dd3fc; }
+.token-string  { color: #5eead4; }
+.token-comment { color: #5b6b84; font-style: italic; }
+.token-number  { color: #fca65a; }
+.token-var     { color: #8ad9ff; }
+
+/* Lab section */
+.lab-block {
+  background: rgba(34,211,238,.03);
+  border: 1px solid rgba(34,211,238,.16);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(4,16,44,.3);
+}
+
+.lab-block__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(180deg, rgba(34,211,238,.08), rgba(34,211,238,.03));
+  border-bottom: 1px solid rgba(34,211,238,.13);
+}
+
+.lab-block__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2dd4bf, #0e7490);
+  color: #fff;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 6px 18px rgba(45,212,191,.22);
+}
+
+.lab-block__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -.01em;
+}
+
+.lab-block__count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  letter-spacing: .04em;
+  flex-shrink: 0;
+}
+
+.lab-steps {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lab-step {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.lab-step:last-child { border-bottom: none; padding-bottom: 4px; }
+.lab-step:first-child { padding-top: 4px; }
+
+.lab-step__num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  border: 1px solid rgba(34,211,238,.22);
+  background: rgba(34,211,238,.05);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.lab-step__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-step__desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.lab-step__desc code {
+  background: rgba(34,211,238,.08);
+  color: var(--accent);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.lab-step__cmd {
+  background: #0a0d16;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  transition: border-color var(--transition);
+}
+
+.lab-step__cmd:hover { border-color: var(--border-2); }
+
+.lab-step__cmd pre {
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #aeb9cc;
+  /* Baja de renglón en vez de cortarse (ver nota en .code-block pre). */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+
+.lab-step__cmd-copy {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.lab-step__cmd:hover .lab-step__cmd-copy,
+.lab-step__cmd-copy:focus-visible { opacity: 1; }
+
+.lab-step__cmd-copy:hover { border-color: var(--border-2); color: var(--text); }
+.lab-step__cmd-copy.copied { color: #2dd4bf; border-color: rgba(45,212,191,.4); opacity: 1; }
+
+/* Body text — mismo tamaño que .block-prose (0.95rem): unifica la escala
+   de párrafo y mantiene el measure dentro de 65-75ch a los 820px de
+   .nivel-main (sin este ajuste el texto suelto de concepts/architecture,
+   sin el padding-24 de los callouts, quedaba en ~78.5ch). */
+.body-text {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+

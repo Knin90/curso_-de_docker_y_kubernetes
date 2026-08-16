@@ -1,0 +1,290 @@
+/* ────────────────────────────────────────────────────────────────────────
+   MODO ESCENAS — zoom por scroll entre módulos (estilo ui8.ai/forge)
+
+   Activado por initSceneZoom (body.scenes-mode, solo si el usuario no pide
+   reducir movimiento). En este modo:
+   - .nivel-scenes: contenedor en flujo que reserva el espacio de scroll
+     (100vh + recorrido total) mientras el stage queda fijo a pantalla.
+   - #nivel-content: stage fijo (inset 0) que contiene las escenas apiladas.
+   - .nivel-scene (antes .nivel-sec): cada módulo es una escena de pantalla
+     completa con scroll interno propio; GSAP las escala/desvanece entre sí.
+   - .scene-counter: HUD flotante con el número de módulo actual.
+   Sin body.scenes-mode, todas estas reglas quedan inactivas y la página
+   renderiza en flujo normal (comportamiento original).
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* El contenedor escenario vive en flujo (mantiene su altura); el stage se
+   fija. La altura total la fija JS (100vh + recorrido de scroll). */
+.nivel-scenes { position: relative; }
+
+/* Stage: fijo a pantalla completa, por encima de la atmósfera (z 1-3) pero
+   bajo la nav (z 100), el sidebar (z 50) y la barra de progreso (z 99).
+   Opacidad 0 por defecto: dos ScrollTriggers la funden al entrar/salir.
+   Fondo sólido PROPIO (no solo en cada escena): cada .nivel-scene se
+   desvanece con su propia opacidad al cruzar de módulo, así que sin este
+   fondo en el stage la atmósfera animada se veía "flashear" detrás durante
+   el crossfade — con esto el piso siempre es opaco. */
+body.scenes-mode .nivel-content {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  opacity: 0;
+  background: var(--bg);
+  will-change: opacity;
+}
+
+/* Cada módulo = una escena de pantalla completa, acelerada por GPU (GSAP le
+   escala/desvanece el transform). Sin fondo propio — lo cubre el del stage
+   (arriba). OJO: este elemento NO hace scroll — scrollear un elemento que
+   además tiene su propio `transform` es una causa clásica de parpadeo en
+   Chrome/Safari (la capa GPU se recompone en conflicto con el scroll). El
+   scroll interno vive en .nivel-scene__inner, un hijo SIN transform propio. */
+body.scenes-mode .nivel-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+/* Mientras hay scroll activo (rueda/trackpad), el cursor queda quieto y el
+   contenido se mueve debajo: sin esto, cada tarjeta/paso de laboratorio que
+   pasa bajo el puntero dispara su :hover y se ve como parpadeo. Se apaga la
+   interacción por un instante — el usuario no está apuntando nada a
+   propósito mientras scrollea. Dos fuentes de scroll, mismo tratamiento:
+   .scene-is-scrolling = scroll interno de un módulo (scroll-engine.js);
+   body.page-is-scrolling = scroll normal del documento, fuera de un módulo
+   o con el modo escenas desactivado (scroll-flicker-guard.js). */
+.scene-is-scrolling .nivel-card,
+.scene-is-scrolling .items-list__item,
+.scene-is-scrolling .lab-step,
+body.page-is-scrolling .nivel-card,
+body.page-is-scrolling .items-list__item,
+body.page-is-scrolling .lab-step {
+  pointer-events: none;
+}
+
+/* Interior de la escena: EL contenedor real de scroll (sin transform propio,
+   ver nota arriba). Centra el cuerpo vertical y horizontalmente cuando sobra
+   espacio, y scrollea cuando el contenido es más alto. En desktop se deja el
+   ancho del sidebar (280px) para centrar en el área visible a su derecha. */
+body.scenes-mode .nivel-scene__inner {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  display: flex;
+}
+
+body.scenes-mode .nivel-scene__inner::-webkit-scrollbar { display: none; }
+
+@media (min-width: 768px) {
+  body.scenes-mode .nivel-scene__inner { padding-left: 280px; }
+}
+
+/* Cuando el contenido no entra entero (grillas de tarjetas largas,
+   laboratorios), la última fila quedaba cortada en seco justo en el borde
+   del viewport, sin indicio de que hay más — se veía "rota". Mientras
+   quede algo por scrollear (scene-engine.js activa esta clase), el borde
+   inferior se desvanece en vez de cortar: se lee como "hay más abajo", no
+   como contenido incompleto. Desaparece solo al llegar al final real. */
+body.scenes-mode .nivel-scene__inner.scene-has-more-below {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 72px), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 72px), transparent);
+}
+
+body.scenes-mode .nivel-scene__body {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 760px;
+  margin: auto;
+  padding: 84px clamp(20px, 5vw, 48px) 100px;
+}
+
+/* ─── HUD: contador de módulos ─── */
+.scene-counter {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 12px 16px 13px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(10, 13, 21, .72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 14px 40px rgba(4, 16, 44, .45), inset 0 1px 0 rgba(255, 255, 255, .05);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+html[data-theme="light"] .scene-counter {
+  background: rgba(255, 255, 255, .78);
+  border-color: rgba(23, 28, 44, .12);
+  box-shadow: 0 14px 40px rgba(30, 41, 80, .18), inset 0 1px 0 rgba(255, 255, 255, .6);
+}
+
+.scene-counter__head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-mono);
+}
+
+.scene-counter__current {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px rgba(34, 211, 238, .4);
+}
+
+.scene-counter__slash {
+  color: var(--text-muted);
+  opacity: .5;
+  font-size: .85rem;
+}
+
+.scene-counter__total {
+  color: var(--text-muted);
+  font-size: .9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.scene-counter__title {
+  font-size: .72rem;
+  color: var(--text-dim);
+  max-width: 220px;
+  text-align: right;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scene-counter__track {
+  width: 120px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+html[data-theme="light"] .scene-counter__track { background: rgba(23, 28, 44, .08); }
+
+.scene-counter__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), #0ea5e9);
+  box-shadow: 0 0 8px rgba(34, 211, 238, .5);
+}
+
+/* Progreso ampliado del HUD: % de avance del nivel y secciones leídas. */
+.scene-counter__pct {
+  margin-left: 6px;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.scene-counter__read {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  transition: color var(--transition);
+}
+
+.scene-counter__read .ph {
+  font-size: .8rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.scene-counter__read.done {
+  color: var(--accent);
+}
+
+@media (max-width: 767px) {
+  body.scenes-mode .nivel-scene__body { padding: 64px 20px 84px; }
+  .scene-counter { right: 14px; bottom: 14px; padding: 10px 13px 11px; }
+  .scene-counter__track { width: 96px; }
+}
+
+/* ─── Inmersivo: chrome oculto durante el escenario (body.scenes-immersed) ───
+   El usuario pidió "inmersivo total (como Forge)": al entrar al escenario se
+   ocultan nav (GSAP la desliza), sidebar, breadcrumb, barra de progreso, el
+   botón FAB del sidebar y el skip-link. Queda solo el HUD (.scene-counter).
+   Al salir del escenario (onLeave/onLeaveBack) la clase se quita y todo
+   reaparece con transición. */
+body.scenes-mode .sidebar {
+  transition: transform var(--transition), opacity .4s var(--ease-out), visibility .4s var(--ease-out);
+}
+
+body.scenes-mode .breadcrumb,
+body.scenes-mode .nivel-progress,
+body.scenes-mode .sidebar-open-btn,
+body.scenes-mode .skip-link {
+  transition: opacity .4s var(--ease-out);
+}
+
+body.scenes-immersed .sidebar {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.scenes-immersed .breadcrumb,
+body.scenes-immersed .nivel-progress,
+body.scenes-immersed .sidebar-open-btn,
+body.scenes-immersed .skip-link {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Con el sidebar oculto, el contenido del módulo se centra en el viewport
+   completo (sin el hueco de 280px). El stage (fixed) ya cubre la pantalla. */
+body.scenes-immersed .nivel-scene__inner {
+  padding-left: 0;
+}
+
+/* Fondo animado apagado del todo mientras estás inmerso en un módulo: sin
+   depender de que el z-index/opacidad del stage lo cubra bien en todo
+   navegador, se apaga directamente el subsistema de atmósfera (partículas,
+   bandas de tormenta, embudo, ráfagas y los orbes de glow por sección). */
+body.scenes-immersed .atmosphere,
+body.scenes-immersed .atmosphere__particles,
+body.scenes-immersed .storm-streaks,
+body.scenes-immersed .section-glow {
+  display: none;
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  body.scenes-immersed .nivel-scene__inner { padding-left: 0; }
+}
+
+/* El modo escenas del landing (sección #niveles como escenas por etapa) se
+   reemplazó por el carousel cinematográfico de main/course-experience/ —
+   ver style/course-experience.css. Todo lo de arriba (.nivel-scenes,
+   .nivel-scene, .scene-counter, body.scenes-mode/scenes-immersed) sigue
+   activo para nivel.html (nivel/scenes.js), que lo comparte vía
+   scene-engine.js. */
+
+/* En móvil, el HUD queda compacto (mismo patrón que nivel.html) */
+@media (max-width: 767px) {
+  .scene-counter__pct { font-size: .82rem; }
+  .scene-counter__read { font-size: .62rem; }
+}
